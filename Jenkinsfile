@@ -10,7 +10,6 @@ pipeline {
   }
   environment {
     DOCKER_REGISTRY = credentials('github_docker_registry')
-    DOCKER_HOST = 'unix:///var/run/docker.sock'
   }
   stages {
     stage('Build') {
@@ -19,8 +18,12 @@ pipeline {
       }
     }
     stage('Dockerize') {
+      environment {
+        DOCKER_HOST = 'unix:///var/run/docker.sock'
+      }
       steps {
-        sh 'mvn -B "-Ddocker.publish.token=${DOCKER_REGISTRY_PSW}" -Dspring-boot.build-image.publish=true spring-boot:build-image'
+        sh 'printenv'
+        sh 'mvn -B "-Ddocker.publish.token=${DOCKER_REGISTRY_PSW}" -Dspring-boot.build-image.publish=true - spring-boot:build-image'
       }
     }
   }
