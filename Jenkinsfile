@@ -4,8 +4,8 @@ pipeline {
   }
   agent {
     docker {
-      image 'maven:3.6-jdk-17'
-      args '-v /home/jenkins/.m2:/var/maven/.m2 -v /home/jenkins/.gnupg:/.gnupg -e MAVEN_CONFIG=/var/maven/.m2 -e MAVEN_OPTS=-Duser.home=/var/maven'
+      image 'maven:3.8.3-openjdk-17'
+      args '-v /home/jenkins/.m2:/var/maven/.m2 -v /home/jenkins/.gnupg:/.gnupg -v /var/run/docker.sock:/var/run/docker.sock:ro -e MAVEN_CONFIG=/var/maven/.m2 -e MAVEN_OPTS=-Duser.home=/var/maven'
     }
   }
   environment {
@@ -21,14 +21,6 @@ pipeline {
       steps {
         sh 'sh 'docker login -u ${DOCKER_REGISTRY_USR} -p ${DOCKER_REGISTRY_PSW} ghcr.io'
         sh 'mvn -B spring-boot:build-image'
-      }
-    }
-    stage('Deploy') {
-      when {
-        branch 'develop'
-      }
-      steps {
-        sh 'mvn -B -Prelease -DskipTests -Dgpg.passphrase=${GPG_SECRET} deploy'
       }
     }
   }

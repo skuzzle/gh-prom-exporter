@@ -79,6 +79,11 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                <image>
+                    <name>ghcr.io/skuzzle/gh-prom-exporter/${project.artifactId}</name>
+                </image>
+                </configuration>
             </plugin>
         </plugins>
     </build>
