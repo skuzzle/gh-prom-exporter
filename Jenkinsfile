@@ -19,7 +19,7 @@ pipeline {
     }
     stage('Dockerize') {
       steps {
-        sh 'sh 'docker login -u ${DOCKER_REGISTRY_USR} -p ${DOCKER_REGISTRY_PSW} ghcr.io'
+        sh 'docker login -u ${DOCKER_REGISTRY_USR} -p ${DOCKER_REGISTRY_PSW} ghcr.io'
         sh 'mvn -B spring-boot:build-image'
       }
     }
