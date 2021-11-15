@@ -19,7 +19,7 @@ pipeline {
     }
     stage('Dockerize') {
       steps {
-        sh 'mvn -B spring-boot:build-image -Ddocker.publish.token=${DOCKER_REGISTRY_PSW} -Dspring-boot.build-image.publish=true'
+        sh 'mvn -B "-Ddocker.publish.token=${DOCKER_REGISTRY_PSW}" -Dspring-boot.build-image.publish=true spring-boot:build-image'
       }
     }
   }
