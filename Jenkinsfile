@@ -15,12 +15,12 @@ pipeline {
   stages {
     stage('Build') {
       steps {
-        sh 'mvnw -B clean verify'
+        sh './mvnw -B clean verify'
       }
     }
     stage('Dockerize') {
       steps {
-        sh 'mvnw -B "-Ddocker.publish.token=${DOCKER_REGISTRY_PSW}" -Dspring-boot.build-image.publish=true spring-boot:build-image'
+        sh './mvnw -B "-Ddocker.publish.token=${DOCKER_REGISTRY_PSW}" -Dspring-boot.build-image.publish=true spring-boot:build-image'
       }
     }
   }
