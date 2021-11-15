@@ -19,8 +19,7 @@ pipeline {
     }
     stage('Dockerize') {
       steps {
-        sh 'docker login -u ${DOCKER_REGISTRY_USR} -p ${DOCKER_REGISTRY_PSW} ghcr.io'
-        sh 'mvn -B spring-boot:build-image'
+        sh 'mvn -B spring-boot:build-image -docker.publish.token=${DOCKER_REGISTRY_PSW}'
       }
     }
   }

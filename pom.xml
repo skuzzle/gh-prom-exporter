@@ -83,6 +83,13 @@
                     <image>
                         <name>ghcr.io/skuzzle/gh-prom-exporter/${project.artifactId}</name>
                     </image>
+                    <docker>
+                        <publishRegistry>
+                            <url>ghcr.io</url>
+                            <username>${docker.publish.user}</username>
+                            <token>${docker.publish.token}</token>
+                        </publishRegistry>
+                    </docker>
                 </configuration>
             </plugin>
         </plugins>
