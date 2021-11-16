@@ -18,12 +18,8 @@ pipeline {
       }
     }
     stage('Dockerize') {
-      environment {
-        DOCKER_HOST = 'unix:///var/run/docker.sock'
-      }
       steps {
-        sh 'printenv'
-        sh 'mvn -B -DskipTests "-Ddocker.publish.token=\${DOCKER_REGISTRY_PSW}" -Dspring-boot.build-image.publish=true spring-boot:build-image'
+        sh 'mvn -B -DskipTests "-Ddocker.publish.usr=\${DOCKER_REGISTRY_USR} -Ddocker.publish.psw=\${DOCKER_REGISTRY_PSW}" -Dspring-boot.build-image.publish=true spring-boot:build-image'
       }
     }
   }

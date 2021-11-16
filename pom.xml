@@ -102,8 +102,8 @@
                     <docker>
                         <publishRegistry>
                             <url>ghcr.io</url>
-                            <username>${docker.publish.user}</username>
-                            <token>${docker.publish.token}</token>
+                            <username>${docker.publish.usr}</username>
+                            <token>${docker.publish.psw}</token>
                         </publishRegistry>
                     </docker>
                 </configuration>
