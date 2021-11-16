@@ -1,14 +1,6 @@
 package de.skuzzle.ghpromexporter.scrape;
 
-public final class ScrapeRepositoryRequest {
-
-    private final String owner;
-    private final String repository;
-
-    private ScrapeRepositoryRequest(String owner, String repository) {
-        this.owner = owner;
-        this.repository = repository;
-    }
+public record ScrapeRepositoryRequest(String owner, String repository) {
 
     public static ScrapeRepositoryRequest of(String owner, String repository) {
         return new ScrapeRepositoryRequest(owner, repository);
