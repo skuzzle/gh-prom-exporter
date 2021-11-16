@@ -26,7 +26,7 @@ class RegistrySerializer {
 
     private final Cache<CacheKey, String> CACHE = CacheBuilder
             .newBuilder()
-            .expireAfterWrite(Duration.ofMinutes(1))
+            .expireAfterWrite(Duration.ofMinutes(5))
             .build();
 
     public Mono<String> fromCache(ScrapeRepositoryRequest request, MediaType mediaType) {
