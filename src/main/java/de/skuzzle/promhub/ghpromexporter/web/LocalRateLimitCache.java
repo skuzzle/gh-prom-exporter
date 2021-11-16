@@ -6,14 +6,12 @@ import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
 import reactor.core.publisher.Mono;
 
-@Component
 class LocalRateLimitCache implements RateLimitCache {
 
     private static final Logger log = LoggerFactory.getLogger(LocalRateLimitCache.class);
