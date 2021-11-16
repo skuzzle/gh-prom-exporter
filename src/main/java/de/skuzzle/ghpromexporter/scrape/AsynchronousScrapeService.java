@@ -45,7 +45,7 @@ public class AsynchronousScrapeService {
     @Scheduled(fixedDelay = 1000 * 60 * 5)
     void scheduledScraping() {
         final Collection<ActiveScraper> scrapers = Set.copyOf(activeRequests.asMap().keySet());
-        log.info("Running asynchronous scraper for {} jobs", scrapers);
+        log.info("Running asynchronous scraper for {} jobs", scrapers.size());
         scrapers.stream().parallel().forEach(this::scrapeAndUpdateCache);
     }
 
