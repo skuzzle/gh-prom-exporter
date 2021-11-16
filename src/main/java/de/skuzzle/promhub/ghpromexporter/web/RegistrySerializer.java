@@ -34,7 +34,7 @@ class RegistrySerializer {
             final CacheKey cacheKey = new CacheKey(mediaType, request.repositoryName());
             final String result = CACHE.getIfPresent(cacheKey);
             if (result != null) {
-                log.info("Resolved cached entry for {}", cacheKey);
+                log.debug("Resolved cached entry for {}", cacheKey);
             }
             return result;
         });
