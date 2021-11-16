@@ -1,6 +1,9 @@
-package de.skuzzle.promhub.ghpromexporter.web;
+package de.skuzzle.ghpromexporter.scrape;
 
-final class ScrapeRepositoryRequest {
+import de.skuzzle.ghpromexporter.github.GitHubAuthentication;
+import de.skuzzle.ghpromexporter.web.ApiKey;
+
+public final class ScrapeRepositoryRequest {
 
     private final String owner;
     private final String repository;
@@ -36,12 +39,12 @@ final class ScrapeRepositoryRequest {
         return this.repository;
     }
 
-    public String repositoryName() {
+    public String repositoryFullName() {
         return owner + "/" + repository;
     }
 
     @Override
     public String toString() {
-        return owner + "/" + repository;
+        return repositoryFullName();
     }
 }

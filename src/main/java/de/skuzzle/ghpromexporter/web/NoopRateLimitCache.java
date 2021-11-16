@@ -1,7 +1,8 @@
-package de.skuzzle.promhub.ghpromexporter.web;
+package de.skuzzle.ghpromexporter.web;
 
 import org.springframework.stereotype.Component;
 
+import de.skuzzle.ghpromexporter.scrape.ScrapeRepositoryRequest;
 import reactor.core.publisher.Mono;
 
 @Component

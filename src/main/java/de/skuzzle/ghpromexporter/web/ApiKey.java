@@ -1,4 +1,4 @@
-package de.skuzzle.promhub.ghpromexporter.web;
+package de.skuzzle.ghpromexporter.web;
 
 import java.net.InetAddress;
 import java.time.Duration;
@@ -70,7 +70,7 @@ public sealed interface ApiKey {
 
         @Override
         public Duration rateLimit() {
-            return Duration.ofMinutes(10);
+            return Duration.ofMinutes(4);
         }
 
         @Override

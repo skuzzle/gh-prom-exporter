@@ -1,6 +1,6 @@
-package de.skuzzle.promhub.ghpromexporter.web;
+package de.skuzzle.ghpromexporter.scrape;
 
-import static de.skuzzle.promhub.ghpromexporter.web.ThrowingSupplier.unchecked;
+import static de.skuzzle.ghpromexporter.scrape.ThrowingSupplier.unchecked;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -23,7 +23,7 @@ class UncheckedRepository {
     public static UncheckedRepository load(ScrapeRepositoryRequest request) {
         try {
             final GitHub gitHub = request.githubAuthentication().connectToGithub();
-            final GHRepository repository = gitHub.getRepository(request.repositoryName());
+            final GHRepository repository = gitHub.getRepository(request.repositoryFullName());
             return new UncheckedRepository(repository, repository.getStatistics());
         } catch (final IOException e) {
             throw new UncheckedIOException(e);

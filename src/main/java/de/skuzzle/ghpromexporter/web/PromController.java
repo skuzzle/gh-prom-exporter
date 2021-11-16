@@ -1,7 +1,5 @@
-package de.skuzzle.promhub.ghpromexporter.web;
+package de.skuzzle.ghpromexporter.web;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -10,12 +8,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+import de.skuzzle.ghpromexporter.github.GitHubAuthentication;
+import de.skuzzle.ghpromexporter.scrape.ScrapeRepositoryRequest;
+import de.skuzzle.ghpromexporter.scrape.ScrapeRepositoryService;
 import reactor.core.publisher.Mono;
 
 @RestController
-record PromController(Service scrapeService, RegistrySerializer serializer, RateLimitCache rateLimiter) {
-
-    private static final Logger log = LoggerFactory.getLogger(PromController.class);
+record PromController(ScrapeRepositoryService scrapeService, CachingRegistrySerializer serializer,
+        RateLimitCache rateLimiter) {
 
     @GetMapping(path = "{user}/{repo}")
     public Mono<ResponseEntity<String>> createStats(@PathVariable String user, @PathVariable String repo,

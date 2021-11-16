@@ -1,4 +1,4 @@
-package de.skuzzle.promhub.ghpromexporter.web;
+package de.skuzzle.ghpromexporter.web;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
+import de.skuzzle.ghpromexporter.scrape.ScrapeRepositoryRequest;
 import reactor.core.publisher.Mono;
 
 class LocalRateLimitCache implements RateLimitCache {
@@ -52,7 +53,7 @@ class LocalRateLimitCache implements RateLimitCache {
     }
 
     private int key(ScrapeRepositoryRequest request) {
-        return Objects.hash(request.apiKey());
+        return Objects.hash(request.apiKey(), request.repositoryFullName());
     }
 
     private record CacheEntry(LocalDateTime lastCall) {

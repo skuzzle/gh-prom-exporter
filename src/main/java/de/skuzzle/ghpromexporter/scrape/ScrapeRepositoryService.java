@@ -1,4 +1,4 @@
-package de.skuzzle.promhub.ghpromexporter.web;
+package de.skuzzle.ghpromexporter.scrape;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,9 +12,9 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 @Component
-public class Service {
+public class ScrapeRepositoryService {
 
-    private static final Logger log = LoggerFactory.getLogger(Service.class);
+    private static final Logger log = LoggerFactory.getLogger(ScrapeRepositoryService.class);
 
     private static final String LABEL_REPOSITORY = "repository";
     private static final String LABEL_OWNER = "owner";

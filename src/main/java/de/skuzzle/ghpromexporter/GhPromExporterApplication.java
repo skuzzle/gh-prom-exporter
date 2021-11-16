@@ -1,4 +1,4 @@
-package de.skuzzle.promhub.ghpromexporter;
+package de.skuzzle.ghpromexporter;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

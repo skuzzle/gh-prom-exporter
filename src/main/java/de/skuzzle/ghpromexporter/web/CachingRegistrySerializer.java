@@ -1,4 +1,4 @@
-package de.skuzzle.promhub.ghpromexporter.web;
+package de.skuzzle.ghpromexporter.web;
 
 import java.io.StringWriter;
 import java.time.Duration;
@@ -12,17 +12,19 @@ import org.springframework.stereotype.Component;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
+import de.skuzzle.ghpromexporter.scrape.RepositoryMetrics;
+import de.skuzzle.ghpromexporter.scrape.ScrapeRepositoryRequest;
 import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.exporter.common.TextFormat;
 import reactor.core.publisher.Mono;
 
 @Component
-class RegistrySerializer {
+class CachingRegistrySerializer {
 
     private static final MediaType OPEN_METRICS = MediaType
             .parseMediaType("application/openmetrics-text; version=1.0.0; charset=utf-8");
 
-    private static final Logger log = LoggerFactory.getLogger(RegistrySerializer.class);
+    private static final Logger log = LoggerFactory.getLogger(CachingRegistrySerializer.class);
 
     private final Cache<CacheKey, String> CACHE = CacheBuilder
             .newBuilder()
@@ -31,7 +33,7 @@ class RegistrySerializer {
 
     public Mono<String> fromCache(ScrapeRepositoryRequest request, MediaType mediaType) {
         return Mono.fromSupplier(() -> {
-            final CacheKey cacheKey = new CacheKey(mediaType, request.repositoryName());
+            final CacheKey cacheKey = new CacheKey(mediaType, request.repositoryFullName());
             final String result = CACHE.getIfPresent(cacheKey);
             if (result != null) {
                 log.debug("Resolved cached entry for {}", cacheKey);
@@ -43,7 +45,7 @@ class RegistrySerializer {
     public String serializeRegistry(RepositoryMetrics metrics, MediaType mediaType) {
         final ScrapeRepositoryRequest request = metrics.request();
         try {
-            return CACHE.get(new CacheKey(mediaType, request.repositoryName()), () -> {
+            return CACHE.get(new CacheKey(mediaType, request.repositoryFullName()), () -> {
                 final CollectorRegistry registry = metrics.registry();
 
                 try (final var stringWriter = new StringWriter()) {

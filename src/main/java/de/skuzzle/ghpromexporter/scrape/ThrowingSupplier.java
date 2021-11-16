@@ -1,4 +1,4 @@
-package de.skuzzle.promhub.ghpromexporter.web;
+package de.skuzzle.ghpromexporter.scrape;
 
 @FunctionalInterface
 interface ThrowingSupplier<T, E extends Throwable> {

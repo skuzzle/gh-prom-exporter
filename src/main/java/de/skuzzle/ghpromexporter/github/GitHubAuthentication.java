@@ -1,4 +1,4 @@
-package de.skuzzle.promhub.ghpromexporter.web;
+package de.skuzzle.ghpromexporter.github;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -7,7 +7,11 @@ import java.util.Base64;
 import org.kohsuke.github.GitHub;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 
-sealed interface GitHubAuthentication {
+import de.skuzzle.ghpromexporter.github.InternalGitHubAuthentication.AnonymousAuthentication;
+import de.skuzzle.ghpromexporter.github.InternalGitHubAuthentication.BasicAuthentication;
+import de.skuzzle.ghpromexporter.github.InternalGitHubAuthentication.TokenAuthentication;
+
+public interface GitHubAuthentication {
 
     public static GitHubAuthentication fromRequest(ServerHttpRequest request) {
         final String authorization = request.getHeaders().getFirst("Authorization");
@@ -23,32 +27,9 @@ sealed interface GitHubAuthentication {
                 return new TokenAuthentication(authorization.substring("bearer ".length()));
             }
         }
-        return new AnonymousAuthentication();
+        return new AnonymousAuthentication(request.getRemoteAddress().getAddress());
     }
 
     GitHub connectToGithub() throws IOException;
 
-    public record TokenAuthentication(String token) implements GitHubAuthentication {
-
-        @Override
-        public GitHub connectToGithub() throws IOException {
-            return GitHub.connectUsingOAuth(token);
-        }
-    }
-
-    public record BasicAuthentication(String username, String oauthToken) implements GitHubAuthentication {
-        @Override
-        public GitHub connectToGithub() throws IOException {
-            return GitHub.connect(username, oauthToken);
-        }
-    }
-
-    public final class AnonymousAuthentication implements GitHubAuthentication {
-
-        @Override
-        public GitHub connectToGithub() throws IOException {
-            return GitHub.connectAnonymously();
-        }
-
-    }
 }

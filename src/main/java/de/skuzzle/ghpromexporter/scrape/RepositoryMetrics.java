@@ -1,8 +1,8 @@
-package de.skuzzle.promhub.ghpromexporter.web;
+package de.skuzzle.ghpromexporter.scrape;
 
 import io.prometheus.client.CollectorRegistry;
 
-class RepositoryMetrics {
+public class RepositoryMetrics {
 
     private final ScrapeRepositoryRequest request;
     private final CollectorRegistry registry;
@@ -12,7 +12,7 @@ class RepositoryMetrics {
         this.registry = registry;
     }
 
-    public static RepositoryMetrics fresh(ScrapeRepositoryRequest request, CollectorRegistry registry) {
+    static RepositoryMetrics fresh(ScrapeRepositoryRequest request, CollectorRegistry registry) {
         return new RepositoryMetrics(request, registry);
     }
 

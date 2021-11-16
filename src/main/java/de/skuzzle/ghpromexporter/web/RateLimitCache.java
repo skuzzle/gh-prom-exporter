@@ -1,5 +1,6 @@
-package de.skuzzle.promhub.ghpromexporter.web;
+package de.skuzzle.ghpromexporter.web;
 
+import de.skuzzle.ghpromexporter.scrape.ScrapeRepositoryRequest;
 import reactor.core.publisher.Mono;
 
 public interface RateLimitCache {
