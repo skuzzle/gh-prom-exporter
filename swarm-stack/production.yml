@@ -25,7 +25,7 @@ services:
         failure_action: rollback
       resources:
         limits:
-          memory: 256M
+          memory: 512M
         reservations:
           memory: 128M
 
