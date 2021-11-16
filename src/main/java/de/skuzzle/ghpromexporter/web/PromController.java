@@ -9,12 +9,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.skuzzle.ghpromexporter.github.GitHubAuthentication;
+import de.skuzzle.ghpromexporter.scrape.AsynchronousScrapeService;
 import de.skuzzle.ghpromexporter.scrape.ScrapeRepositoryRequest;
-import de.skuzzle.ghpromexporter.scrape.ScrapeRepositoryService;
 import reactor.core.publisher.Mono;
 
 @RestController
-record PromController(ScrapeRepositoryService scrapeService, CachingRegistrySerializer serializer,
+record PromController(AsynchronousScrapeService scrapeService, SerializedRegistryCache serializer,
         RateLimitCache rateLimiter) {
 
     @GetMapping(path = "{user}/{repo}")
@@ -22,16 +22,14 @@ record PromController(ScrapeRepositoryService scrapeService, CachingRegistrySeri
             ServerHttpRequest request) {
 
         final GitHubAuthentication gitHubAuthentication = GitHubAuthentication.fromRequest(request);
-        final ApiKey apiKey = ApiKey.fromRequest(request);
 
         final MediaType contentType = MediaType.TEXT_PLAIN;// determineContentType(request);
 
-        final ScrapeRepositoryRequest scrapeRepositoryRequest = ScrapeRepositoryRequest.of(user, repo,
-                apiKey, gitHubAuthentication);
+        final ScrapeRepositoryRequest scrapeRepositoryRequest = ScrapeRepositoryRequest.of(user, repo);
 
         return rateLimiter.tryAcquireSeat(scrapeRepositoryRequest)
                 .flatMap(__ -> serializer.fromCache(scrapeRepositoryRequest, contentType)
-                        .switchIfEmpty(scrapeService.scrapeRepository(scrapeRepositoryRequest)
+                        .switchIfEmpty(scrapeService.scrapeReactive(gitHubAuthentication, scrapeRepositoryRequest)
                                 .map(result -> serializer.serializeRegistry(result, contentType))))
                 .map(serializedMetrics -> ResponseEntity.ok()
                         .contentType(contentType)

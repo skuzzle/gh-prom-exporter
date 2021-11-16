@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 public class WebConfiguration {
 
     @Bean
-    CachingRegistrySerializer cachingRegistrySerializer(WebProperties properties) {
-        return new CachingRegistrySerializer(properties.serializedRegistryCache().newBuilder().build());
+    SerializedRegistryCache cachingRegistrySerializer(WebProperties properties) {
+        return new SerializedRegistryCache(properties.serializedRegistryCache().newBuilder().build());
     }
 }

@@ -1,6 +1,5 @@
 package de.skuzzle.ghpromexporter.web;
 
-import java.io.StringWriter;
 import java.util.concurrent.ExecutionException;
 
 import org.slf4j.Logger;
@@ -11,21 +10,18 @@ import com.google.common.cache.Cache;
 
 import de.skuzzle.ghpromexporter.scrape.RepositoryMetrics;
 import de.skuzzle.ghpromexporter.scrape.ScrapeRepositoryRequest;
-import io.prometheus.client.CollectorRegistry;
-import io.prometheus.client.exporter.common.TextFormat;
 import reactor.core.publisher.Mono;
 
-class CachingRegistrySerializer {
+class SerializedRegistryCache {
 
-    private static final MediaType OPEN_METRICS = MediaType
-            .parseMediaType("application/openmetrics-text; version=1.0.0; charset=utf-8");
-
-    private static final Logger log = LoggerFactory.getLogger(CachingRegistrySerializer.class);
+    private static final Logger log = LoggerFactory.getLogger(SerializedRegistryCache.class);
 
     private final Cache<CacheKey, String> cache;
+    private final RegistrySerializer delegate;
 
-    public CachingRegistrySerializer(Cache<CacheKey, String> cache) {
+    public SerializedRegistryCache(Cache<CacheKey, String> cache) {
         this.cache = cache;
+        this.delegate = new RegistrySerializer();
     }
 
     public Mono<String> fromCache(ScrapeRepositoryRequest request, MediaType mediaType) {
@@ -42,18 +38,9 @@ class CachingRegistrySerializer {
     public String serializeRegistry(RepositoryMetrics metrics, MediaType mediaType) {
         final ScrapeRepositoryRequest request = metrics.request();
         try {
-            return cache.get(new CacheKey(mediaType, request.repositoryFullName()), () -> {
-                final CollectorRegistry registry = metrics.registry();
-
-                try (final var stringWriter = new StringWriter()) {
-                    if (mediaType.equals(OPEN_METRICS)) {
-                        TextFormat.writeOpenMetrics100(stringWriter, registry.metricFamilySamples());
-                    } else {
-                        TextFormat.write004(stringWriter, registry.metricFamilySamples());
-                    }
-                    return stringWriter.toString();
-                }
-            });
+            return cache.get(
+                    new CacheKey(mediaType, request.repositoryFullName()),
+                    () -> delegate.serializeRegistry(metrics, mediaType));
         } catch (final ExecutionException e) {
             throw new RuntimeException(e);
         }
