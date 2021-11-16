@@ -101,9 +101,10 @@
                     <network>host</network>
                     <docker>
                         <publishRegistry>
-                            <url>ghcr.io</url>
+                            <url>https://ghcr.io</url>
                             <username>${docker.publish.usr}</username>
                             <password>${docker.publish.psw}</password>
+                            <email>simon@taddiken.online</email>
                         </publishRegistry>
                     </docker>
                 </configuration>
