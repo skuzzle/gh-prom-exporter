@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import de.skuzzle.ghpromexporter.github.ScrapableRepository;
 import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.Counter;
 import io.prometheus.client.SimpleCollector;
@@ -34,32 +35,34 @@ public class ScrapeRepositoryService {
     private RepositoryMetrics scrapeFresh(ScrapeRepositoryRequest repository) {
         final CollectorRegistry registry = new CollectorRegistry();
 
-        final UncheckedRepository uncheckedRepository = UncheckedRepository.load(repository);
+        final var authentication = repository.githubAuthentication();
+        final var repositoryFullName = repository.repositoryFullName();
+        final var scrapableRepository = ScrapableRepository.load(authentication, repositoryFullName);
 
         b(Counter.build("additions", "TBD"), registry)
                 .labels(repository.owner(), repository.name())
-                .inc(uncheckedRepository.totalAdditions());
+                .inc(scrapableRepository.totalAdditions());
         b(Counter.build("deletions", "TBD"), registry)
                 .labels(repository.owner(), repository.name())
-                .inc(uncheckedRepository.totalDeletions());
+                .inc(scrapableRepository.totalDeletions());
         b(Counter.build("stargazers", "The repository's stargazer count"), registry)
                 .labels(repository.owner(), repository.name())
-                .inc(uncheckedRepository.stargazersCount());
+                .inc(scrapableRepository.stargazersCount());
         b(Counter.build("forks", "The repository's fork count"), registry)
                 .labels(repository.owner(), repository.name())
-                .inc(uncheckedRepository.forkCount());
+                .inc(scrapableRepository.forkCount());
         b(Counter.build("open_issues", "The repository's open issue count"), registry)
                 .labels(repository.owner(), repository.name())
-                .inc(uncheckedRepository.openIssueCount());
+                .inc(scrapableRepository.openIssueCount());
         b(Counter.build("subscribers", "The repository's subscriber count"), registry)
                 .labels(repository.owner(), repository.name())
-                .inc(uncheckedRepository.subscriberCount());
+                .inc(scrapableRepository.subscriberCount());
         b(Counter.build("watchers", "The repository's watcher count"), registry)
                 .labels(repository.owner(), repository.name())
-                .inc(uncheckedRepository.watchersCount());
+                .inc(scrapableRepository.watchersCount());
         b(Counter.build("size", "The repository's size"), registry)
                 .labels(repository.owner(), repository.name())
-                .inc(uncheckedRepository.size());
+                .inc(scrapableRepository.size());
 
         final RepositoryMetrics metrics = RepositoryMetrics.fresh(repository, registry);
         log.info("Scraped fresh metrics for {}", repository);
