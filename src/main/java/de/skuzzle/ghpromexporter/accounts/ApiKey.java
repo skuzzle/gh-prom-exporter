@@ -1,4 +1,4 @@
-package de.skuzzle.ghpromexporter.web;
+package de.skuzzle.ghpromexporter.accounts;
 
 import java.net.InetAddress;
 import java.time.Duration;
