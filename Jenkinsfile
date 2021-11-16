@@ -27,6 +27,7 @@ pipeline {
         branch 'master'
       }
       steps {
+        sh 'docker login -u ${DOCKER_REGISTRY_USR} -p ${DOCKER_REGISTRY_PSW} ghcr.io'
         sh 'docker stack deploy --compose-file swarm-stack/production.yml --prune --with-registry-auth gh-prom-exporter'
       }
     }
