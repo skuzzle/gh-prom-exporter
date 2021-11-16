@@ -3,6 +3,9 @@ pipeline {
   options { 
     disableConcurrentBuilds() 
   }
+  parameters {
+    string(name: 'VERSION', defaultValue: 'latest', description: 'The docker image version to deploy')
+  }
   environment {
     DOCKER_REGISTRY = credentials('github_docker_registry')
   }
