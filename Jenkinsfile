@@ -23,7 +23,7 @@ pipeline {
       }
       steps {
         sh 'printenv'
-        sh 'mvn -B -DskipTests "-Ddocker.publish.token=\${DOCKER_REGISTRY_PSW}" -Dspring-boot.build-image.publish=true spring-boot:build-image -X'
+        sh 'mvn -B -DskipTests "-Ddocker.publish.token=\${DOCKER_REGISTRY_PSW}" -Dspring-boot.build-image.publish=true spring-boot:build-image'
       }
     }
   }
