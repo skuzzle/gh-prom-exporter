@@ -4,19 +4,19 @@ import java.time.Duration;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import de.skuzzle.ghpromexporter.cache.CacheConfiguration;
+import de.skuzzle.ghpromexporter.cache.CacheProperties;
 
 @ConfigurationProperties("web")
 public class WebProperties {
 
-    private CacheConfiguration serializedRegistryCache = new CacheConfiguration()
+    private CacheProperties serializedRegistryCache = new CacheProperties()
             .setExpireAfterWrite(Duration.ofMinutes(5));
 
-    public CacheConfiguration serializedRegistryCache() {
+    public CacheProperties serializedRegistryCache() {
         return this.serializedRegistryCache;
     }
 
-    public void setSerializedRegistryCache(CacheConfiguration serializedRegistryCache) {
+    public void setSerializedRegistryCache(CacheProperties serializedRegistryCache) {
         this.serializedRegistryCache = serializedRegistryCache;
     }
 }

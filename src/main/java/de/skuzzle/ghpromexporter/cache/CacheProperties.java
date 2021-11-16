@@ -7,7 +7,10 @@ import java.util.function.IntConsumer;
 import com.google.common.base.Preconditions;
 import com.google.common.cache.CacheBuilder;
 
-public final class CacheConfiguration {
+/**
+ * Can be used to configure Guava caches using Spring Configuration Properties.
+ */
+public final class CacheProperties {
 
     private static final int INT_DEFAULT = -1;
 
@@ -46,32 +49,32 @@ public final class CacheConfiguration {
         }
     }
 
-    public CacheConfiguration setInitialCapacity(int initialCapacity) {
+    public CacheProperties setInitialCapacity(int initialCapacity) {
         this.initialCapacity = initialCapacity;
         return this;
     }
 
-    public CacheConfiguration setMaximumSize(int maximumSize) {
+    public CacheProperties setMaximumSize(int maximumSize) {
         this.maximumSize = maximumSize;
         return this;
     }
 
-    public CacheConfiguration setConcurrencyLevel(int concurrencyLevel) {
+    public CacheProperties setConcurrencyLevel(int concurrencyLevel) {
         this.concurrencyLevel = concurrencyLevel;
         return this;
     }
 
-    public CacheConfiguration setExpireAfterAccess(Duration expireAfterAccess) {
+    public CacheProperties setExpireAfterAccess(Duration expireAfterAccess) {
         this.expireAfterAccess = expireAfterAccess;
         return this;
     }
 
-    public CacheConfiguration setExpireAfterWrite(Duration expireAfterWrite) {
+    public CacheProperties setExpireAfterWrite(Duration expireAfterWrite) {
         this.expireAfterWrite = expireAfterWrite;
         return this;
     }
 
-    public CacheConfiguration setRefreshAfterWrite(Duration refreshAfterWrite) {
+    public CacheProperties setRefreshAfterWrite(Duration refreshAfterWrite) {
         this.refreshAfterWrite = refreshAfterWrite;
         return this;
     }
