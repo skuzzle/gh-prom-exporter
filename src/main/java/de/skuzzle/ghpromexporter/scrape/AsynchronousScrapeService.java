@@ -32,7 +32,10 @@ public class AsynchronousScrapeService {
         final ActiveScraper scraper = new ActiveScraper(authentication, request);
         return Mono.fromSupplier(() -> {
             try {
-                return activeRequests.get(scraper, () -> scraper.scrapeWith(scrapeRepositoryService));
+                return activeRequests.get(scraper, () -> {
+                    log.info("Cache miss for {}. Scraping fresh metrics now", scraper);
+                    return scraper.scrapeWith(scrapeRepositoryService);
+                });
             } catch (final ExecutionException e) {
                 throw new RuntimeException(e);
             }
@@ -42,13 +45,15 @@ public class AsynchronousScrapeService {
     @Scheduled(fixedDelay = 1000 * 60 * 5)
     void scheduledScraping() {
         final Collection<ActiveScraper> scrapers = Set.copyOf(activeRequests.asMap().keySet());
-        scrapers.forEach(this::scrapeAndUpdateCache);
+        log.info("Running asynchronous scraper for {} jobs", scrapers);
+        scrapers.stream().parallel().forEach(this::scrapeAndUpdateCache);
     }
 
     void scrapeAndUpdateCache(ActiveScraper scraper) {
         try {
             final RepositoryMetrics repositoryMetrics = scraper.scrapeWith(scrapeRepositoryService);
             activeRequests.put(scraper, repositoryMetrics);
+            log.info("Asynschronously updated metrics for: {}", scraper);
         } catch (final Exception e) {
             activeRequests.invalidate(scraper);
             log.error("Scrape using '{}' threw exception. Will be removed from cache of active scrapers", scraper, e);

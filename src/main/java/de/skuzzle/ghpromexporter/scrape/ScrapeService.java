@@ -65,7 +65,7 @@ public class ScrapeService {
                 .inc(scrapableRepository.size());
 
         final RepositoryMetrics metrics = RepositoryMetrics.fresh(repository, registry);
-        log.info("Scraped fresh metrics for {}", repository);
+        log.debug("Scraped fresh metrics for {}", repository);
         return metrics;
     }
 
