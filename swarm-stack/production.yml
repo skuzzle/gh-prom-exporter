@@ -2,11 +2,11 @@ version: '3.7'
 services:
   gh-prom-exporter:
     image: ghcr.io/skuzzle/gh-prom-exporter/gh-prom-exporter:${VERSION:?VERSION property not defined or empty}
-    healthcheck:
-      test: ["CMD", "curl" , "-f", "http://localhost:9000/actuator/health"]
-      interval: 20s
-      timeout: 10s
-      retries: 5
+#    healthcheck:
+#      test: ["CMD", "curl" , "-f", "http://localhost:9000/actuator/health"]
+#      interval: 20s
+#      timeout: 10s
+#      retries: 5
     networks:
     - traefik_proxy
     - monitoring
