@@ -1,0 +1,34 @@
+version: '3.7'
+services:
+  cmpbackend:
+    image: ghcr.io/skuzzle/gh-prom-exporter/gh-prom-exporter:${VERSION:?VERSION property not defined or empty}
+    environment:
+    # Logging
+#    - 'logging.level.de.skuzzle.cmp.common.http=DEBUG'
+    healthcheck:
+      test: ["CMD", "curl" , "-f", "http://localhost:9000/actuator/health"]
+      interval: 20s
+      timeout: 10s
+      retries: 5
+    networks:
+    - traefik_proxy
+    - monitoring
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        order: start-first
+        failure_action: rollback
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 128M
+
+networks:
+  traefik_proxy:
+    external: true
+    name: traefik_proxy
+  monitoring:
+    external: true
+    name: monitoring

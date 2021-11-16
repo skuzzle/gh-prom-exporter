@@ -22,5 +22,14 @@ pipeline {
         sh 'mvn -B -DskipTests "-Ddocker.publish.usr=\${DOCKER_REGISTRY_USR}" "-Ddocker.publish.psw=\${DOCKER_REGISTRY_PSW}" -Dspring-boot.build-image.publish=true spring-boot:build-image'
       }
     }
+    stage('Deploy') {
+      agent any
+      when {
+        branch 'master'
+      }
+      steps {
+        sh 'docker stack deploy --compose-file swarm-stack/production.yml --prune --with-registry-auth gh-prom-exporter'
+      }
+    }
   }
 }
