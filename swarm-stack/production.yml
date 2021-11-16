@@ -14,6 +14,13 @@ services:
     - traefik_proxy
     - monitoring
     deploy:
+      labels:
+        traefik.enable: 'true'
+        traefik.http.routers.gh-prom-exporter.tls: 'true'
+        traefik.http.routers.gh-prom-exporter.tls.certresolver: le
+        traefik.http.routers.gh-prom-exporter.rule: Host(`gh.skuzzle.de`)
+        traefik.http.routers.gh-prom-exporter.entrypoints: https
+        traefik.http.services.gh-prom-exporter.loadbalancer.server.port: 8080
       replicas: 1
       update_config:
         parallelism: 1
