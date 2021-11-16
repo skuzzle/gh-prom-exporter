@@ -10,7 +10,7 @@ import org.kohsuke.github.GHRepositoryStatistics;
 import org.kohsuke.github.GHRepositoryStatistics.CodeFrequency;
 import org.kohsuke.github.GitHub;
 
-public class ScrapableRepository {
+public final class ScrapableRepository {
 
     private final GHRepository repository;
     private final GHRepositoryStatistics statistics;
