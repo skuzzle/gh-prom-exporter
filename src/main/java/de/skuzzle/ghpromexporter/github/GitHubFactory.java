@@ -1,7 +1,6 @@
 package de.skuzzle.ghpromexporter.github;
 
 import java.io.IOException;
-import java.time.Duration;
 import java.util.concurrent.ExecutionException;
 
 import org.kohsuke.github.GitHub;
@@ -10,16 +9,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 
 final class GitHubFactory {
 
     private static final Logger log = LoggerFactory.getLogger(GitHubFactory.class);
 
-    private static final Cache<GitHubAuthentication, GitHub> CACHED_GITHUBS = CacheBuilder.newBuilder()
-            .maximumSize(10000)
-            .expireAfterAccess(Duration.ofHours(2))
-            .build();
+    // Configured by GitHubConfiguration
+    static volatile Cache<GitHubAuthentication, GitHub> CACHED_GITHUBS;
 
     public static GitHub createGitHub(InternalGitHubAuthentication origin) throws IOException {
         try {

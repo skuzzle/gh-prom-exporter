@@ -2,7 +2,7 @@ package de.skuzzle.ghpromexporter.scrape;
 
 import io.prometheus.client.CollectorRegistry;
 
-public class RepositoryMetrics {
+public final class RepositoryMetrics {
 
     private final ScrapeRepositoryRequest request;
     private final CollectorRegistry registry;

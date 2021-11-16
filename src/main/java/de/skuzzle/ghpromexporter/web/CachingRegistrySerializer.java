@@ -1,16 +1,13 @@
 package de.skuzzle.ghpromexporter.web;
 
 import java.io.StringWriter;
-import java.time.Duration;
 import java.util.concurrent.ExecutionException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Component;
 
 import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 
 import de.skuzzle.ghpromexporter.scrape.RepositoryMetrics;
 import de.skuzzle.ghpromexporter.scrape.ScrapeRepositoryRequest;
@@ -18,7 +15,6 @@ import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.exporter.common.TextFormat;
 import reactor.core.publisher.Mono;
 
-@Component
 class CachingRegistrySerializer {
 
     private static final MediaType OPEN_METRICS = MediaType
@@ -26,15 +22,16 @@ class CachingRegistrySerializer {
 
     private static final Logger log = LoggerFactory.getLogger(CachingRegistrySerializer.class);
 
-    private final Cache<CacheKey, String> CACHE = CacheBuilder
-            .newBuilder()
-            .expireAfterWrite(Duration.ofMinutes(5))
-            .build();
+    private final Cache<CacheKey, String> cache;
+
+    public CachingRegistrySerializer(Cache<CacheKey, String> cache) {
+        this.cache = cache;
+    }
 
     public Mono<String> fromCache(ScrapeRepositoryRequest request, MediaType mediaType) {
         return Mono.fromSupplier(() -> {
             final CacheKey cacheKey = new CacheKey(mediaType, request.repositoryFullName());
-            final String result = CACHE.getIfPresent(cacheKey);
+            final String result = cache.getIfPresent(cacheKey);
             if (result != null) {
                 log.debug("Resolved cached entry for {}", cacheKey);
             }
@@ -45,7 +42,7 @@ class CachingRegistrySerializer {
     public String serializeRegistry(RepositoryMetrics metrics, MediaType mediaType) {
         final ScrapeRepositoryRequest request = metrics.request();
         try {
-            return CACHE.get(new CacheKey(mediaType, request.repositoryFullName()), () -> {
+            return cache.get(new CacheKey(mediaType, request.repositoryFullName()), () -> {
                 final CollectorRegistry registry = metrics.registry();
 
                 try (final var stringWriter = new StringWriter()) {
