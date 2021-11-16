@@ -103,7 +103,7 @@
                         <publishRegistry>
                             <url>ghcr.io</url>
                             <username>${docker.publish.usr}</username>
-                            <token>${docker.publish.psw}</token>
+                            <password>${docker.publish.psw}</password>
                         </publishRegistry>
                     </docker>
                 </configuration>
