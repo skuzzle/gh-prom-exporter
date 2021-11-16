@@ -19,7 +19,7 @@ pipeline {
     }
     stage('Dockerize') {
       steps {
-        sh 'mvn -B -DskipTests "-Ddocker.publish.usr=\${DOCKER_REGISTRY_USR} -Ddocker.publish.psw=\${DOCKER_REGISTRY_PSW}" -Dspring-boot.build-image.publish=true spring-boot:build-image'
+        sh 'mvn -B -DskipTests "-Ddocker.publish.usr=\${DOCKER_REGISTRY_USR}" "-Ddocker.publish.psw=\${DOCKER_REGISTRY_PSW}" -Dspring-boot.build-image.publish=true spring-boot:build-image'
       }
     }
   }
