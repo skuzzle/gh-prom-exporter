@@ -1,10 +1,7 @@
 version: '3.7'
 services:
-  cmpbackend:
+  gh-prom-exporter:
     image: ghcr.io/skuzzle/gh-prom-exporter/gh-prom-exporter:${VERSION:?VERSION property not defined or empty}
-    environment:
-    # Logging
-#    - 'logging.level.de.skuzzle.cmp.common.http=DEBUG'
     healthcheck:
       test: ["CMD", "curl" , "-f", "http://localhost:9000/actuator/health"]
       interval: 20s
