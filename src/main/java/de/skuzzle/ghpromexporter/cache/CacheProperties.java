@@ -28,7 +28,7 @@ public final class CacheProperties {
         return newBuilder;
     }
 
-    public <K, V> Cache<K, V> buildCache() {
+    public <K, V> Cache<K, V> build() {
         return newBuilder().build();
     }
 

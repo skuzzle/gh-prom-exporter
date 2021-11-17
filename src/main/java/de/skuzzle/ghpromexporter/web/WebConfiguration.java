@@ -10,6 +10,6 @@ public class WebConfiguration {
 
     @Bean
     SerializedRegistryCache cachingRegistrySerializer(WebProperties properties) {
-        return new SerializedRegistryCache(properties.serializedRegistryCache().buildCache());
+        return new SerializedRegistryCache(properties.serializedRegistryCache().build());
     }
 }
