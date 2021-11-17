@@ -12,6 +12,6 @@ public class ScrapeConfiguration {
 
     @Bean
     AsynchronousScrapeService asynchronousScraper(ScrapeProperties properties, ScrapeService scrapeService) {
-        return new AsynchronousScrapeService(properties.cache().newBuilder().build(), scrapeService);
+        return new AsynchronousScrapeService(properties.cache().buildCache(), scrapeService);
     }
 }

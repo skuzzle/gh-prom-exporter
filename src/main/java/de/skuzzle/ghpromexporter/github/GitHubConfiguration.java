@@ -17,6 +17,6 @@ public class GitHubConfiguration {
 
     @PostConstruct
     public void configureCache() {
-        GitHubFactory.CACHED_GITHUBS = properties.cache().newBuilder().build();
+        GitHubFactory.CACHED_GITHUBS = properties.cache().buildCache();
     }
 }

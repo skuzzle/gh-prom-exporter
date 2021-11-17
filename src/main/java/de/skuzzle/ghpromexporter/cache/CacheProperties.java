@@ -5,6 +5,7 @@ import java.util.function.Consumer;
 import java.util.function.IntConsumer;
 
 import com.google.common.base.Preconditions;
+import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
 /**
@@ -21,10 +22,14 @@ public final class CacheProperties {
     private Duration expireAfterWrite;
     private Duration refreshAfterWrite;
 
-    public CacheBuilder<Object, Object> newBuilder() {
+    private CacheBuilder<Object, Object> newBuilder() {
         final CacheBuilder<Object, Object> newBuilder = CacheBuilder.newBuilder();
         configure(newBuilder);
         return newBuilder;
+    }
+
+    public <K, V> Cache<K, V> buildCache() {
+        return newBuilder().build();
     }
 
     public <K, V> void configure(CacheBuilder<K, V> builder) {
