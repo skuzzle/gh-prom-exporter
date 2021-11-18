@@ -48,7 +48,10 @@ public class AsynchronousScrapeService {
     void scheduledScraping() {
         final Collection<ActiveScraper> scrapers = Set.copyOf(activeRequests.asMap().keySet());
         log.info("Running asynchronous scraper for {} jobs", scrapers.size());
-        scrapers.stream().parallel().forEach(this::scrapeAndUpdateCache);
+        scrapers.stream()
+                .parallel()
+                .peek(this::scrapeAndUpdateCache)
+                .count();
     }
 
     void scrapeAndUpdateCache(ActiveScraper scraper) {
