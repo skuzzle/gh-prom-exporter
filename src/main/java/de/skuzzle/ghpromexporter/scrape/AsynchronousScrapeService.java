@@ -47,11 +47,11 @@ public class AsynchronousScrapeService {
     @Scheduled(fixedDelay = 1000 * 60 * 5)
     void scheduledScraping() {
         final Collection<ActiveScraper> scrapers = Set.copyOf(activeRequests.asMap().keySet());
-        log.info("Running asynchronous scraper for {} jobs", scrapers.size());
-        scrapers.stream()
+        final long scraperCount = scrapers.stream()
                 .parallel()
                 .peek(this::scrapeAndUpdateCache)
                 .count();
+        log.info("Updated cached metrics for {} jobs", scraperCount);
     }
 
     void scrapeAndUpdateCache(ActiveScraper scraper) {
