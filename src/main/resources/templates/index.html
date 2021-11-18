@@ -34,12 +34,11 @@
             </li>
             <li>
                 <mark><b>Warning:</b></mark> You should probably <b>NEVER</b> trust me (or anyone) with your GitHub 
-                token like this. Use at your own risk! And again, please read the FAQ.
+                token like this. Use at your own risk! And again, <u>please read the FAQ</u>.
             </li>
             <li>
                 Create a static scrape target in your prometheus configuration like this: <code>
-                    <pre>
-scrape_configs:
+<pre>scrape_configs:
 - job_name: CHANGE_ME
   scrape_interval: 2m
   basic_auth: 
@@ -48,8 +47,7 @@ scrape_configs:
   scheme: https
   metrics_path: /YOUR-GITHUB-USERNAME/YOUR-REPOSITORY
   static_configs:
-    - targets: ['gh.skuzzle.de']
-        </pre>
+    - targets: ['gh.skuzzle.de']</pre>
                 </code>
                 <mark>Note:</mark> You probably don't want to put your token in plain text into the config. Prometheus also allows to read it from a mounted secret file.
         </ol>
@@ -81,12 +79,12 @@ scrape_configs:
             authorize for specific repositories. But this hasn't been implemented yet as this is, at the time of 
             writing, just an experimental side project. If demand rises, I might ship this as a feature.
             </p>
-            Until now, your only chance is to believe that the following is true: <br/>
+            Until now, your only chance is to <em>believe</em> that the following is true: <br/>
             
             <blockquote>
             Your access token is neither stored nor logged anywhere in this application. There is no technical 
             possibility it can be determined by anyone from the requests you make to <code>gh.skuzzle.de</code>.
-            </blockquote> 
+            </blockquote>
         </li>
         <li>
             <b>How often can I call your service?</b>
