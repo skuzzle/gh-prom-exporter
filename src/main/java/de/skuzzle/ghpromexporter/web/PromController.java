@@ -1,5 +1,7 @@
 package de.skuzzle.ghpromexporter.web;
 
+import java.net.InetAddress;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +16,8 @@ import de.skuzzle.ghpromexporter.scrape.ScrapeRepositoryRequest;
 import reactor.core.publisher.Mono;
 
 @RestController
-record PromController(AsynchronousScrapeService scrapeService, SerializedRegistryCache serializer) {
+record PromController(AsynchronousScrapeService scrapeService, SerializedRegistryCache serializer,
+        AbuseLimiter abuseLimiter) {
 
     @GetMapping(path = "{user}/{repo}")
     public Mono<ResponseEntity<String>> createStats(@PathVariable String user, @PathVariable String repo,
@@ -25,18 +28,24 @@ record PromController(AsynchronousScrapeService scrapeService, SerializedRegistr
             return Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body("Anonymous scraping is not allowed. Please include a GitHub API key in your request"));
         }
+
+        final InetAddress origin = request.getRemoteAddress().getAddress();
         final MediaType contentType = MediaType.TEXT_PLAIN;// determineContentType(request);
         final ScrapeRepositoryRequest scrapeRepositoryRequest = ScrapeRepositoryRequest.of(user, repo);
 
-        return serializer.fromCache(scrapeRepositoryRequest, contentType)
-                .switchIfEmpty(scrapeService.scrapeReactive(gitHubAuthentication, scrapeRepositoryRequest)
-                        .map(result -> serializer.serializeRegistry(result, contentType)))
+        return abuseLimiter.blockAbusers(origin)
+                .flatMap(__ -> serializer.fromCache(scrapeRepositoryRequest, contentType)
+                        .switchIfEmpty(
+                                scrapeService.scrapeReactive(gitHubAuthentication, scrapeRepositoryRequest)
+                                        .map(result -> serializer.serializeRegistry(result, contentType))))
                 .map(serializedMetrics -> ResponseEntity.ok()
                         .contentType(contentType)
                         .body(serializedMetrics))
+                .doOnError(e -> abuseLimiter.recordCall(e, origin))
+                .onErrorResume(e -> Mono.just(ResponseEntity.badRequest().body(e.getMessage())))
                 .switchIfEmpty(
                         Mono.fromSupplier(() -> ResponseEntity
-                                .status(HttpStatus.BANDWIDTH_LIMIT_EXCEEDED)
-                                .body("You have exceeded the local rate limit\n")));
+                                .status(HttpStatus.FORBIDDEN)
+                                .body("Your IP '%s' has exceeded the abuse limit\n".formatted(origin))));
     }
 }

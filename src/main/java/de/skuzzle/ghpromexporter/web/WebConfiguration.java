@@ -9,6 +9,11 @@ import org.springframework.context.annotation.Configuration;
 public class WebConfiguration {
 
     @Bean
+    AbuseLimiter abuserLimiter(WebProperties properties) {
+        return new AbuseLimiter(properties.abuseCache().build(), properties.abuseLimit());
+    }
+
+    @Bean
     SerializedRegistryCache cachingRegistrySerializer(WebProperties properties) {
         return new SerializedRegistryCache(properties.serializedRegistryCache().build());
     }
