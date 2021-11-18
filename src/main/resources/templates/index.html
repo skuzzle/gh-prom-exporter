@@ -17,7 +17,7 @@
         <h2>** Warning **</h2>
         <p>
         This service is currently in public beta. I make no promises regarding its availability, security or reliability. 
-        <mark>USE AT YOUR OWN RISK</mark> and make sure you have read the FAQ section at the bottom.
+        <mark><b>USE AT YOUR OWN RISK</b></mark> and make sure you have read the FAQ section at the bottom.
         </p>
         
         <p>
@@ -27,16 +27,20 @@
         <h2>How to</h2>
 
         <ol>
-            <li>Go to <a href="https://github.com/settings/tokens">GitHub Developer Settings / Token</a> and obtain a 
+            <li>
+                Go to <a href="https://github.com/settings/tokens">GitHub Developer Settings / Token</a> and obtain a 
                 new personal access token. For scraping public repositories, you don't need to select any additional 
                 scope.
             </li>
-            <li><mark>Warning!</mark> You should probably <b>NEVER</b> trust me (or anyone) with your GitHub token like this. Use at your own
-                risk!</li>
-            <li>Create a static scrape target in your prometheus configuration like this: <code>
+            <li>
+                <mark><b>Warning:</b></mark> You should probably <b>NEVER</b> trust me (or anyone) with your GitHub 
+                token like this. Use at your own risk! And again, please read the FAQ.
+            </li>
+            <li>
+                Create a static scrape target in your prometheus configuration like this: <code>
                     <pre>
 scrape_configs:
-- job_name: github_WHATEVER
+- job_name: CHANGE_ME
   scrape_interval: 2m
   basic_auth: 
     username: YOUR-GITHUB-USERNAME
