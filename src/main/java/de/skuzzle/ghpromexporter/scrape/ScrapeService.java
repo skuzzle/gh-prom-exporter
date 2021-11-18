@@ -35,6 +35,7 @@ public class ScrapeService {
 
     private RepositoryMetrics scrapeFresh(GitHubAuthentication authentication, ScrapeRepositoryRequest repository) {
         final CollectorRegistry registry = new CollectorRegistry();
+        final long start = System.currentTimeMillis();
 
         final var repositoryFullName = repository.repositoryFullName();
         final var scrapableRepository = ScrapableRepository.load(authentication, repositoryFullName);
@@ -64,8 +65,9 @@ public class ScrapeService {
                 .labels(repository.owner(), repository.name())
                 .inc(scrapableRepository.size());
 
-        final RepositoryMetrics metrics = RepositoryMetrics.fresh(repository, registry);
-        log.debug("Scraped fresh metrics for {}", repository);
+        final long scrapeDuration = System.currentTimeMillis() - start;
+        final RepositoryMetrics metrics = RepositoryMetrics.fresh(repository, registry, scrapeDuration);
+        log.debug("Scraped fresh metrics for {} in {}ms", repository, scrapeDuration);
         return metrics;
     }
 

@@ -33,11 +33,13 @@ public class AsynchronousScrapeService {
         return Mono.fromSupplier(() -> {
             try {
                 return activeRequests.get(scraper, () -> {
-                    log.info("Cache miss for {}. Scraping fresh metrics now", scraper);
-                    return scraper.scrapeWith(scrapeRepositoryService);
+                    final RepositoryMetrics repositoryMetrics = scraper.scrapeWith(scrapeRepositoryService);
+                    log.info("Cache miss for {}. Scraped fresh metrics now in {}ms", scraper,
+                            repositoryMetrics.scrapeDuration());
+                    return repositoryMetrics;
                 });
             } catch (final ExecutionException e) {
-                throw new RuntimeException("Error while loading fresh metrics for " + scraper, e);
+                throw new RuntimeException("Error while loading fresh metrics after cache miss for " + scraper, e);
             }
         });
     }
@@ -53,7 +55,7 @@ public class AsynchronousScrapeService {
         try {
             final RepositoryMetrics repositoryMetrics = scraper.scrapeWith(scrapeRepositoryService);
             activeRequests.put(scraper, repositoryMetrics);
-            log.info("Asynschronously updated metrics for: {}", scraper);
+            log.info("Asynschronously updated metrics for: {} in {}ms", scraper, repositoryMetrics.scrapeDuration());
         } catch (final Exception e) {
             activeRequests.invalidate(scraper);
             log.error("Scrape using '{}' threw exception. Will be removed from cache of active scrapers", scraper, e);
