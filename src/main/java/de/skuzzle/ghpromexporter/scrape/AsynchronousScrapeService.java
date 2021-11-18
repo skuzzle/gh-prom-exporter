@@ -37,7 +37,7 @@ public class AsynchronousScrapeService {
                     return scraper.scrapeWith(scrapeRepositoryService);
                 });
             } catch (final ExecutionException e) {
-                throw new RuntimeException(e);
+                throw new RuntimeException("Error while loading fresh metrics for " + scraper, e);
             }
         });
     }

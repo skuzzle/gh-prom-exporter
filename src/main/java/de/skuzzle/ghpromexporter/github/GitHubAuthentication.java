@@ -32,4 +32,6 @@ public interface GitHubAuthentication {
 
     GitHub connectToGithub() throws IOException;
 
+    boolean isAnonymous();
+
 }

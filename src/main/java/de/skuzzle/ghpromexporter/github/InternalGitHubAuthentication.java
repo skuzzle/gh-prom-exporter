@@ -23,6 +23,11 @@ sealed interface InternalGitHubAuthentication extends GitHubAuthentication {
         }
 
         @Override
+        public boolean isAnonymous() {
+            return false;
+        }
+
+        @Override
         public String toString() {
             return "token=****";
         }
@@ -32,6 +37,11 @@ sealed interface InternalGitHubAuthentication extends GitHubAuthentication {
         @Override
         public GitHub connectToGithub() throws IOException {
             return GitHubFactory.createGitHub(this);
+        }
+
+        @Override
+        public boolean isAnonymous() {
+            return false;
         }
 
         @Override
@@ -55,6 +65,11 @@ sealed interface InternalGitHubAuthentication extends GitHubAuthentication {
         @Override
         public GitHubBuilder consumeBuilder(GitHubBuilder builder) {
             return builder;
+        }
+
+        @Override
+        public boolean isAnonymous() {
+            return true;
         }
 
         @Override

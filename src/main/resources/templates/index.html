@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="../static/simple.min.css" th:href="@{/simple.min.css}">
+<title>GitHub Prometheus Export</title>
+</head>
+<body>
+    <header>
+        <h1>GitHub Prometheus Export</h1>
+        <p>Export your favorite repositories to prometheus and visualize them with grafana!</p>
+    </header>
+
+    <main>
+    
+        <h2>** Warning **</h2>
+        <p>
+        This service is currently in public beta. I make no promises regarding its availability, security or reliability. 
+        <mark>USE AT YOUR OWN RISK</mark> and make sure you have read the FAQ section at the bottom.
+        </p>
+        
+        <p>
+        <img alt="Screenshot of the basic Grafana dashboard" th:src="@{/screenshot.png}" src="../static/screenshot.png"/>
+        </p>
+        
+        <h2>How to</h2>
+
+        <ol>
+            <li>Go to <a href="https://github.com/settings/tokens">GitHub Developer Settings / Token</a> and obtain a new token with the
+                following permissions: TODO: find out minimum set of scopes required to scrape public repositories
+            </li>
+            <li><mark>Warning!</mark> You should probably <b>NEVER</b> trust me (or anyone) with your GitHub token like this. Use at your own
+                risk!</li>
+            <li>Create a static scrape target in your prometheus configuration like this: <code>
+                    <pre>
+scrape_configs:
+- job_name: github_WHATEVER
+  scrape_interval: 2m
+  basic_auth: 
+    username: YOUR-GITHUB-USERNAME
+    password: YOUR-ACCESS-TOKEN
+  scheme: https
+  metrics_path: /YOUR-GITHUB-USERNAME/YOUR-REPOSITORY
+  static_configs:
+    - targets: ['gh.skuzzle.de']
+        </pre>
+                </code>
+                <mark>Note:</mark> You probably don't want to put your token in plain text into the config. Prometheus also allows to read it from a mounted secret file.
+        </ol>
+        
+        <h2>FAQ</h2>
+        <ul>
+        <li>
+            <b>Why do I need to use a GitHub access token?</b>
+            <p>
+            GitHub enforces a <a href="https://docs.github.com/en/rest/overview/resources-in-the-rest-api#rate-limiting">
+            rate limit</a> to its API. If we'd query the API anonymously, we would be restricted to at 
+            most 60 requests <em>per hour</em> from our IP addresses. By using access tokens, every API call will be 
+            counted against <em>YOUR</em> personal hourly rate limit (which is 5000 requests per hour).
+            </p>
+        </li>
+        <li>
+            <b>How much of my personal API rate limit will you consume?</b>
+            <p>
+            Independent of the scrape interval you specified in the prometheus configuration, we will actually only 
+            scrape the GitHub repository every <em>5</em> minutes to not stress your user dependent GitHub API 
+            rate limit. A single scrape takes like 3 API calls. In the meanwhile, we return cached metrics from the 
+            most recent repository scrape.
+            </p>
+        </li>
+        <li>
+            <b>I have security concerns trusting you with my access token</b>
+            <p>
+            Its ok, you should have. In a perfect world, we'd use a GitHub OAuth client or GitHub App which you'd had to
+            authorize for specific repositories. But this hasn't been implemented yet as this is, at the time of 
+            writing, just an experimental side project. If demand rises, I might ship this as a feature.
+            </p>
+            Until now, your only chance is to believe that the following is true: <br/>
+            
+            <blockquote>
+            Your access token is neither stored nor logged anywhere in this application. There is no technical 
+            possibility it can be determined by anyone from the requests you make to <code>gh.skuzzle.de</code>.
+            </blockquote> 
+        </li>
+        <li>
+            <b>Can I monitor private repositories?</b>
+            <p>
+            Technically: yes. But concerning security, you probably don't want to pass around GitHub tokens with access 
+            to your private repositories. 
+            </p>
+        </li>
+        <li>
+            <b>I don't want to use the public service. Can I host this on-premise?</b>
+            <p>
+            Not yet, but technically everything is prepared so that you can run this application yourself in a 
+            environment that supports docker containers.
+            </p>
+        </li>
+        <li>
+            <b>How can I visualize the scraped metrics in grafana?</b>
+            <p>
+            I've created a very basic dashboard for this. You can download its json model right 
+            <a href="../static/dashboard.json" th:href="@{/dashboard.json}">here</a>.
+            </p>
+        </li>
+        </ul>
+    </main>
+
+    <footer>
+        <p>by <a href="https://simon.taddiken.online">Simon Taddiken</a></p>
+    </footer>
+</body>
+</html>
