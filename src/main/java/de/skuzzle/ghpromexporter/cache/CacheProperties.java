@@ -29,7 +29,9 @@ public final class CacheProperties {
     }
 
     public <K, V> Cache<K, V> build() {
-        return newBuilder().build();
+        return newBuilder()
+                .recordStats()
+                .build();
     }
 
     public <K, V> void configure(CacheBuilder<K, V> builder) {
