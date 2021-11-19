@@ -54,7 +54,7 @@ public class AsynchronousScrapeService {
         log.info("Updated cached metrics for {} jobs", scraperCount);
     }
 
-    void scrapeAndUpdateCache(ActiveScraper scraper) {
+    private void scrapeAndUpdateCache(ActiveScraper scraper) {
         try {
             final RepositoryMetrics repositoryMetrics = scraper.scrapeWith(scrapeRepositoryService);
             activeRequests.put(scraper, repositoryMetrics);
