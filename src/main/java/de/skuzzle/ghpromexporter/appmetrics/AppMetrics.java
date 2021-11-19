@@ -11,7 +11,7 @@ public final class AppMetrics {
     private static final String NAMESPACE = "ghp";
 
     public static final Summary SCRAPE_DURATION = Summary
-            .build("scrape_duration_seconds", "Single repository scrape duration")
+            .build("repository_scrape_duration_seconds", "Single repository scrape duration")
             .namespace(NAMESPACE)
             .register();
 
