@@ -1,6 +1,7 @@
 package de.skuzzle.ghpromexporter.scrape;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -11,7 +12,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class ScrapeConfiguration {
 
     @Bean
-    AsynchronousScrapeService asynchronousScraper(ScrapeProperties properties, ScrapeService scrapeService) {
-        return new AsynchronousScrapeService(properties.cache().build(), scrapeService);
+    AsynchronousScrapeService asynchronousScraper(ScrapeProperties properties, ScrapeService scrapeService,
+            Tracer tracer) {
+        return new AsynchronousScrapeService(properties.cache().build(), scrapeService, tracer);
     }
 }
