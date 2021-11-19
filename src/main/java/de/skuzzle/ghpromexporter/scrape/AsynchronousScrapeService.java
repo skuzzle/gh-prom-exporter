@@ -47,10 +47,12 @@ public class AsynchronousScrapeService {
     @Scheduled(fixedDelay = 1000 * 60 * 5)
     void scheduledScraping() {
         final Collection<ActiveScraper> scrapers = Set.copyOf(activeRequests.asMap().keySet());
-        final long scraperCount = scrapers.stream()
+        final int scraperCount = scrapers.stream()
                 .parallel()
                 .peek(this::scrapeAndUpdateCache)
-                .count();
+                .toList()
+                .size(); // dont use .count() because it doesnt execute the stream
+                         // pipeline!
         log.info("Updated cached metrics for {} jobs", scraperCount);
     }
 
