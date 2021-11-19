@@ -8,6 +8,7 @@ import org.kohsuke.github.GitHubBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Preconditions;
 import com.google.common.cache.Cache;
 
 final class GitHubFactory {
@@ -18,6 +19,7 @@ final class GitHubFactory {
     static volatile Cache<GitHubAuthentication, GitHub> CACHED_GITHUBS;
 
     public static GitHub createGitHub(InternalGitHubAuthentication origin) throws IOException {
+        Preconditions.checkArgument(CACHED_GITHUBS != null, "GITHUB client cache has not yet been initialized");
         try {
             return CACHED_GITHUBS.get(origin, () -> buildGitHubFor(origin));
         } catch (final ExecutionException e) {
