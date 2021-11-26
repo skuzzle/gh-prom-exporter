@@ -37,7 +37,7 @@ class ScrapeService {
         final CollectorRegistry registry = new CollectorRegistry();
         final long start = System.currentTimeMillis();
 
-        return AppMetrics.SCRAPE_DURATION.time(() -> {
+        return AppMetrics.scrapeDuration().record(() -> {
             final var repositoryFullName = repository.repositoryFullName();
             final var scrapableRepository = ScrapableRepository.load(authentication, repositoryFullName);
             b(Counter.build("additions", "TBD"), registry)
