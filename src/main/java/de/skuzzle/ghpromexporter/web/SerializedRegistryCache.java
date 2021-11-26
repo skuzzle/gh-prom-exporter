@@ -8,7 +8,7 @@ import org.springframework.http.MediaType;
 
 import com.google.common.cache.Cache;
 
-import de.skuzzle.ghpromexporter.scrape.RepositoryMetrics;
+import de.skuzzle.ghpromexporter.scrape.ScrapeResult;
 import de.skuzzle.ghpromexporter.scrape.ScrapeRepositoryRequest;
 import reactor.core.publisher.Mono;
 
@@ -35,7 +35,7 @@ class SerializedRegistryCache {
         });
     }
 
-    public String serializeRegistry(RepositoryMetrics metrics, MediaType mediaType) {
+    public String serializeRegistry(ScrapeResult metrics, MediaType mediaType) {
         final ScrapeRepositoryRequest request = metrics.request();
         try {
             return cache.get(

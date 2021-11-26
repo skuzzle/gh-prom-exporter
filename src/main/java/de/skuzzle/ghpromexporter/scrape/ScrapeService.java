@@ -21,36 +21,40 @@ class ScrapeService {
     private static final String LABEL_OWNER = "owner";
     private static final String NAMESPACE = "github";
 
-    public Mono<RepositoryMetrics> scrapeReactive(GitHubAuthentication authentication,
+    public Mono<ScrapeResult> scrapeReactive(GitHubAuthentication authentication,
             ScrapeRepositoryRequest repository) {
         return Mono.fromSupplier(() -> scrapeFresh(authentication, repository))
                 .subscribeOn(Schedulers.boundedElastic());
     }
 
-    public RepositoryMetrics scrape(GitHubAuthentication authentication,
+    public ScrapeResult scrape(GitHubAuthentication authentication,
             ScrapeRepositoryRequest repository) {
         return scrapeFresh(authentication, repository);
     }
 
-    private RepositoryMetrics scrapeFresh(GitHubAuthentication authentication, ScrapeRepositoryRequest repository) {
+    private ScrapeResult scrapeFresh(GitHubAuthentication authentication, ScrapeRepositoryRequest repository) {
         final long start = System.currentTimeMillis();
         final Meters meters = new Meters();
         return AppMetrics.scrapeDuration().record(() -> {
             final var repositoryFullName = repository.repositoryFullName();
             final var scrapableRepository = ScrapableRepository.load(authentication, repositoryFullName);
 
-            meters.additions.labels(repository.owner(), repository.name()).inc(scrapableRepository.totalAdditions());
-            meters.deletions.labels(repository.owner(), repository.name()).inc(scrapableRepository.totalDeletions());
+            meters.additions.labels(repository.owner(), repository.name())
+                    .inc(scrapableRepository.totalAdditions());
+            meters.deletions.labels(repository.owner(), repository.name())
+                    .inc(scrapableRepository.totalDeletions());
             meters.stargazers.labels(repository.owner(), repository.name()).inc(scrapableRepository.stargazersCount());
             meters.forks.labels(repository.owner(), repository.name()).inc(scrapableRepository.forkCount());
             meters.open_issues.labels(repository.owner(), repository.name()).inc(scrapableRepository.openIssueCount());
             meters.subscribers.labels(repository.owner(), repository.name()).inc(scrapableRepository.subscriberCount());
             meters.watchers.labels(repository.owner(), repository.name()).inc(scrapableRepository.watchersCount());
             meters.size.labels(repository.owner(), repository.name()).inc(scrapableRepository.size());
+            meters.api_calls_estimate.labels(repository.owner(), repository.name())
+                    .inc(scrapableRepository.apiCallEstimate());
             final long scrapeDuration = System.currentTimeMillis() - start;
             meters.scrapeDuration.labels(repository.owner(), repository.name()).observe(scrapeDuration);
 
-            final RepositoryMetrics metrics = RepositoryMetrics.fresh(repository, meters.registry, scrapeDuration);
+            final ScrapeResult metrics = ScrapeResult.fresh(repository, meters.registry, scrapeDuration);
             log.debug("Scraped fresh metrics for {} in {}ms", repository, scrapeDuration);
             return metrics;
         });
@@ -66,6 +70,7 @@ class ScrapeService {
         private final Counter subscribers;
         private final Counter watchers;
         private final Counter size;
+        private final Counter api_calls_estimate;
         private final Summary scrapeDuration;
 
         public Meters() {
@@ -86,6 +91,9 @@ class ScrapeService {
                     .namespace(NAMESPACE).labelNames(LABEL_OWNER, LABEL_REPOSITORY).register(registry);
             this.size = Counter.build("size", "The repository's size in KB")
                     .namespace(NAMESPACE).labelNames(LABEL_OWNER, LABEL_REPOSITORY).register(registry);
+            this.api_calls_estimate = Counter.build("api_calls_estimate", "Estimated number of calls to the GitHub api")
+                    .namespace(NAMESPACE).labelNames(LABEL_OWNER, LABEL_REPOSITORY).register(registry);
+
             this.scrapeDuration = Summary.build("scrape_duration", "Duration of a single scrape")
                     .namespace(NAMESPACE).labelNames(LABEL_OWNER, LABEL_REPOSITORY).register(registry);
         }

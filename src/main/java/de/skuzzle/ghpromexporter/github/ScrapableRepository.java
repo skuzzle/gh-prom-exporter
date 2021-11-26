@@ -1,33 +1,38 @@
 package de.skuzzle.ghpromexporter.github;
 
-import static de.skuzzle.ghpromexporter.github.ThrowingSupplier.unchecked;
-
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.util.List;
 
 import org.kohsuke.github.GHRepository;
-import org.kohsuke.github.GHRepositoryStatistics;
 import org.kohsuke.github.GHRepositoryStatistics.CodeFrequency;
 import org.kohsuke.github.GitHub;
 
 public final class ScrapableRepository {
 
     private final GHRepository repository;
-    private final GHRepositoryStatistics statistics;
+    private final List<CodeFrequency> codeFrequency;
 
-    private ScrapableRepository(GHRepository repository, GHRepositoryStatistics statistics) {
+    private ScrapableRepository(GHRepository repository, List<CodeFrequency> codeFrequency) {
         this.repository = repository;
-        this.statistics = statistics;
+        this.codeFrequency = codeFrequency;
     }
 
     public static ScrapableRepository load(GitHubAuthentication authentication, String repositoryFullName) {
         try {
             final GitHub gitHub = authentication.connectToGithub();
             final GHRepository repository = gitHub.getRepository(repositoryFullName);
-            return new ScrapableRepository(repository, repository.getStatistics());
+            final List<CodeFrequency> codeFrequency = repository.getStatistics().getCodeFrequency();
+
+            return new ScrapableRepository(repository, codeFrequency);
         } catch (final IOException e) {
             throw new UncheckedIOException(e);
         }
+    }
+
+    public int apiCallEstimate() {
+        // 2 Calls so far: load repository + read code frequency
+        return 2;
     }
 
     public int stargazersCount() {
@@ -55,13 +60,11 @@ public final class ScrapableRepository {
     }
 
     public long totalAdditions() {
-        return unchecked(statistics::getCodeFrequency).stream().mapToLong(CodeFrequency::getAdditions)
-                .sum();
+        return codeFrequency.stream().mapToLong(CodeFrequency::getAdditions).sum();
     }
 
     public long totalDeletions() {
-        return -unchecked(statistics::getCodeFrequency).stream().mapToLong(CodeFrequency::getDeletions)
-                .sum();
+        return -codeFrequency.stream().mapToLong(CodeFrequency::getDeletions).sum();
     }
 
 }

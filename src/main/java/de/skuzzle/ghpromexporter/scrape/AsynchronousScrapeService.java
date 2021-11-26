@@ -19,25 +19,25 @@ public class AsynchronousScrapeService {
 
     private static final Logger log = LoggerFactory.getLogger(AsynchronousScrapeService.class);
 
-    private final Cache<ActiveScraper, RepositoryMetrics> activeRequests;
+    private final Cache<ActiveScraper, ScrapeResult> activeRequests;
     private final ScrapeService scrapeRepositoryService;
     private final Tracer tracer;
 
-    AsynchronousScrapeService(Cache<ActiveScraper, RepositoryMetrics> activeRequests,
+    AsynchronousScrapeService(Cache<ActiveScraper, ScrapeResult> activeRequests,
             ScrapeService scrapeRepositoryService, Tracer tracer) {
         this.activeRequests = activeRequests;
         this.scrapeRepositoryService = scrapeRepositoryService;
         this.tracer = tracer;
     }
 
-    public Mono<RepositoryMetrics> scrapeReactive(GitHubAuthentication authentication,
+    public Mono<ScrapeResult> scrapeReactive(GitHubAuthentication authentication,
             ScrapeRepositoryRequest request) {
 
         final ActiveScraper scraper = new ActiveScraper(authentication, request);
         return Mono.fromSupplier(() -> {
             try {
                 return activeRequests.get(scraper, () -> {
-                    final RepositoryMetrics repositoryMetrics = scraper.scrapeWith(scrapeRepositoryService);
+                    final ScrapeResult repositoryMetrics = scraper.scrapeWith(scrapeRepositoryService);
                     log.info("Cache miss for {}. Scraped fresh metrics now in {}ms", scraper,
                             repositoryMetrics.scrapeDuration());
                     return repositoryMetrics;
@@ -69,7 +69,7 @@ public class AsynchronousScrapeService {
     private void scrapeAndUpdateCache(Span parentSpan, ActiveScraper scraper) {
         final Span nextSpan = tracer.nextSpan(parentSpan).name("scrapeSingleRepo");
         try (var ws = tracer.withSpan(nextSpan.start())) {
-            final RepositoryMetrics repositoryMetrics = scraper.scrapeWith(scrapeRepositoryService);
+            final ScrapeResult repositoryMetrics = scraper.scrapeWith(scrapeRepositoryService);
             activeRequests.put(scraper, repositoryMetrics);
             log.info("Asynschronously updated metrics for: {} in {}ms", scraper, repositoryMetrics.scrapeDuration());
         } catch (final Exception e) {
@@ -82,7 +82,7 @@ public class AsynchronousScrapeService {
 
     private record ActiveScraper(GitHubAuthentication authentication, ScrapeRepositoryRequest repository) {
 
-        RepositoryMetrics scrapeWith(ScrapeService scrapeRepositoryService) {
+        ScrapeResult scrapeWith(ScrapeService scrapeRepositoryService) {
             return scrapeRepositoryService.scrape(authentication, repository);
         }
     }
