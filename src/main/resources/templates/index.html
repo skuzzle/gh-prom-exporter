@@ -68,7 +68,8 @@
             <p>
             Independent of the scrape interval you specified in the prometheus configuration, we will actually only 
             scrape the GitHub repository every <em>5</em> minutes to not stress your user dependent GitHub API 
-            rate limit. A single scrape takes like 3 API calls. In the meanwhile, we return cached metrics from the 
+            rate limit. A single scrape takes like 2 API calls. You can monitor an estimation of the API calls being 
+            made using the counter <code>api_calls_estimate</code>. In the meanwhile, we return cached metrics from the 
             most recent repository scrape.
             </p>
         </li>
@@ -115,6 +116,60 @@
             I've created a very basic dashboard for this. You can download its json model right 
             <a href="../static/dashboard.json" th:href="@{/dashboard.json}">here</a>.
             </p>
+        </li>
+        <li>
+            <b>Which metrics are reported?</b>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Metric</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>github_additions_total</code></td>
+                        <td>Sum of additions over the last 52 weeks</td>
+                    </tr>
+                    <tr>
+                        <td><code>github_deletions_total</code></td>
+                        <td>Negative sum of deletions over the last 52 weeks</td>
+                    </tr>
+                    <tr>
+                        <td><code>github_stargazers_total</code></td>
+                        <td>Number of stargazers per repository</td>
+                    </tr>
+                    <tr>
+                        <td><code>github_forks_total</code></td>
+                        <td>Number of forks per repository</td>
+                    </tr>
+                    <tr>
+                        <td><code>github_open_issues_total</code></td>
+                        <td>Number of open issues per repository</td>
+                    </tr>
+                    <tr>
+                        <td><code>github_subscribers_total</code></td>
+                        <td>Number of subscribers per repository</td>
+                    </tr>
+                    <tr>
+                        <td><code>github_watchers_total</code></td>
+                        <td>Number of watchers per repository</td>
+                    </tr>
+                    <tr>
+                        <td><code>github_size_total</code></td>
+                        <td>Size in KB of the repository</td>
+                    </tr>
+                    <tr>
+                        <td><code>github_api_calls_estimate_total</code></td>
+                        <td>Estimated count of GitHub API calls that have been made to scrape this repository.</td>
+                    </tr>
+                    <tr>
+                        <td><code>github_scrape_duration_sum</code></td>
+                        <td>Scrape duration in ms per repository</td>
+                    </tr>
+                </tbody>
+                <caption>Table of metrics that are being reported to prometheus during each scrape</caption>
+            </table>
         </li>
         </ul>
     </main>
