@@ -67,7 +67,7 @@
             <b>How much of my personal API rate limit will you consume?</b>
             <p>
             Independent of the scrape interval you specified in the prometheus configuration, we will actually only 
-            scrape the GitHub repository every <em>5</em> minutes to not stress your user dependent GitHub API 
+            scrape the GitHub repository every <em>30</em> minutes to not stress your user dependent GitHub API 
             rate limit. A single scrape takes like 2 API calls. You can monitor an estimation of the API calls being 
             made using the counter <code>api_calls_estimate</code>. In the meanwhile, we return cached metrics from the 
             most recent repository scrape.
