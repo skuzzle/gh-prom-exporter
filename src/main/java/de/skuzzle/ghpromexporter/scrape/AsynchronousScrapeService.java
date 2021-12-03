@@ -48,7 +48,7 @@ public class AsynchronousScrapeService {
         });
     }
 
-    @Scheduled(fixedDelay = 1000 * 60 * 5)
+    @Scheduled(fixedDelay = 1000 * 60 * 30)
     void scheduledScraping() {
         final Span newSpan = tracer.nextSpan().name("scheduledScrape");
 
