@@ -23,7 +23,7 @@ final class GitHubFactory {
         try {
             return CACHED_GITHUBS.get(origin, () -> buildGitHubFor(origin));
         } catch (final ExecutionException e) {
-            if (e.getCause()instanceof final IOException ioe) {
+            if (e.getCause() instanceof final IOException ioe) {
                 throw ioe;
             }
             throw new IOException(e);

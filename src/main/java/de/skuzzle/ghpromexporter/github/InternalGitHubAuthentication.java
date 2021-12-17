@@ -10,12 +10,12 @@ sealed interface InternalGitHubAuthentication extends GitHubAuthentication {
 
     GitHubBuilder consumeBuilder(GitHubBuilder builder);
 
-    record TokenAuthentication(String token) implements InternalGitHubAuthentication {
+    @Override
+    default GitHub connectToGithub() throws IOException {
+        return GitHubFactory.createGitHub(this);
+    }
 
-        @Override
-        public GitHub connectToGithub() throws IOException {
-            return GitHubFactory.createGitHub(this);
-        }
+    record TokenAuthentication(String token) implements InternalGitHubAuthentication {
 
         @Override
         public GitHubBuilder consumeBuilder(GitHubBuilder builder) {
@@ -34,10 +34,6 @@ sealed interface InternalGitHubAuthentication extends GitHubAuthentication {
     }
 
     record BasicAuthentication(String username, String oauthToken) implements InternalGitHubAuthentication {
-        @Override
-        public GitHub connectToGithub() throws IOException {
-            return GitHubFactory.createGitHub(this);
-        }
 
         @Override
         public boolean isAnonymous() {
@@ -56,11 +52,6 @@ sealed interface InternalGitHubAuthentication extends GitHubAuthentication {
     }
 
     record AnonymousAuthentication(InetAddress clientIp) implements InternalGitHubAuthentication {
-
-        @Override
-        public GitHub connectToGithub() throws IOException {
-            return GitHubFactory.createGitHub(this);
-        }
 
         @Override
         public GitHubBuilder consumeBuilder(GitHubBuilder builder) {

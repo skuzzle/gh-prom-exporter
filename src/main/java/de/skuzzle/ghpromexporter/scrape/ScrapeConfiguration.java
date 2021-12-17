@@ -12,8 +12,14 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class ScrapeConfiguration {
 
     @Bean
-    AsynchronousScrapeService asynchronousScraper(ScrapeProperties properties, ScrapeService scrapeService,
+    RegistrationRepository registrationRepository(ScrapeProperties properties) {
+        return new MemoryRegistrationRepository(properties.cache().build());
+    }
+
+    @Bean
+    AsynchronousScrapeService asynchronousScraper(RegistrationRepository registrationRepository,
+            ScrapeService scrapeService,
             Tracer tracer) {
-        return new AsynchronousScrapeService(properties.cache().build(), scrapeService, tracer);
+        return new AsynchronousScrapeService(registrationRepository, scrapeService, tracer);
     }
 }

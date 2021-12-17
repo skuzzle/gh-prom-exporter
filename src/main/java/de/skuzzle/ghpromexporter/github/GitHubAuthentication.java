@@ -1,6 +1,8 @@
 package de.skuzzle.ghpromexporter.github;
 
 import java.io.IOException;
+import java.io.Serializable;
+import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
@@ -11,7 +13,7 @@ import de.skuzzle.ghpromexporter.github.InternalGitHubAuthentication.AnonymousAu
 import de.skuzzle.ghpromexporter.github.InternalGitHubAuthentication.BasicAuthentication;
 import de.skuzzle.ghpromexporter.github.InternalGitHubAuthentication.TokenAuthentication;
 
-public interface GitHubAuthentication {
+public sealed interface GitHubAuthentication extends Serializable permits InternalGitHubAuthentication {
 
     public static GitHubAuthentication fromRequest(ServerHttpRequest request) {
         final String authorization = request.getHeaders().getFirst("Authorization");
@@ -20,14 +22,26 @@ public interface GitHubAuthentication {
                 final byte[] decodedBytes = Base64.getDecoder().decode(authorization.substring("basic ".length()));
                 final String usernamePassword = new String(decodedBytes, StandardCharsets.ISO_8859_1);
                 final String[] parts = usernamePassword.split(":");
-                return new BasicAuthentication(parts[0], parts[1]);
+                return usernamePassword(parts[0], parts[1]);
             } else if (authorization.toLowerCase().startsWith("token ")) {
-                return new TokenAuthentication(authorization.substring("token ".length()));
+                return token(authorization.substring("token ".length()));
             } else if (authorization.toLowerCase().startsWith("bearer ")) {
-                return new TokenAuthentication(authorization.substring("bearer ".length()));
+                return token(authorization.substring("bearer ".length()));
             }
         }
-        return new AnonymousAuthentication(request.getRemoteAddress().getAddress());
+        return anonymous(request.getRemoteAddress().getAddress());
+    }
+
+    public static GitHubAuthentication usernamePassword(String username, String password) {
+        return new BasicAuthentication(username, password);
+    }
+
+    public static GitHubAuthentication token(String token) {
+        return new TokenAuthentication(token);
+    }
+
+    public static GitHubAuthentication anonymous(InetAddress source) {
+        return new AnonymousAuthentication(source);
     }
 
     GitHub connectToGithub() throws IOException;

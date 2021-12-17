@@ -5,18 +5,15 @@ import java.io.StringWriter;
 
 import org.springframework.http.MediaType;
 
-import de.skuzzle.ghpromexporter.scrape.ScrapeResult;
 import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.exporter.common.TextFormat;
 
-class DefaultRegistrySerializer  {
+class DefaultRegistrySerializer {
 
     private static final MediaType OPEN_METRICS = MediaType
             .parseMediaType("application/openmetrics-text; version=1.0.0; charset=utf-8");
 
-    public String serializeRegistry(ScrapeResult metrics, MediaType mediaType) throws IOException {
-        final CollectorRegistry registry = metrics.registry();
-
+    public String serializeRegistry(CollectorRegistry registry, MediaType mediaType) throws IOException {
         try (final var stringWriter = new StringWriter()) {
             if (mediaType.equals(OPEN_METRICS)) {
                 TextFormat.writeOpenMetrics100(stringWriter, registry.metricFamilySamples());

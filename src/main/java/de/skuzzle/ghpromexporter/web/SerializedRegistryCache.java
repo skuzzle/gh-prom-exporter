@@ -8,8 +8,8 @@ import org.springframework.http.MediaType;
 
 import com.google.common.cache.Cache;
 
-import de.skuzzle.ghpromexporter.scrape.ScrapeResult;
 import de.skuzzle.ghpromexporter.scrape.ScrapeRepositoryRequest;
+import io.prometheus.client.CollectorRegistry;
 import reactor.core.publisher.Mono;
 
 class SerializedRegistryCache {
@@ -17,11 +17,11 @@ class SerializedRegistryCache {
     private static final Logger log = LoggerFactory.getLogger(SerializedRegistryCache.class);
 
     private final Cache<CacheKey, String> cache;
-    private final RegistrySerializer delegate;
+    private final DefaultRegistrySerializer delegate;
 
     public SerializedRegistryCache(Cache<CacheKey, String> cache) {
         this.cache = cache;
-        this.delegate = new RegistrySerializer();
+        this.delegate = new DefaultRegistrySerializer();
     }
 
     public Mono<String> fromCache(ScrapeRepositoryRequest request, MediaType mediaType) {
@@ -35,12 +35,11 @@ class SerializedRegistryCache {
         });
     }
 
-    public String serializeRegistry(ScrapeResult metrics, MediaType mediaType) {
-        final ScrapeRepositoryRequest request = metrics.request();
+    public String serializeRegistry(ScrapeRepositoryRequest request, CollectorRegistry registry, MediaType mediaType) {
         try {
             return cache.get(
                     new CacheKey(mediaType, request.repositoryFullName()),
-                    () -> delegate.serializeRegistry(metrics, mediaType));
+                    () -> delegate.serializeRegistry(registry, mediaType));
         } catch (final ExecutionException e) {
             throw new RuntimeException(e);
         }

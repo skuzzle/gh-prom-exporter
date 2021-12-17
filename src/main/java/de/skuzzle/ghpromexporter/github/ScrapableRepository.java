@@ -30,11 +30,6 @@ public final class ScrapableRepository {
         }
     }
 
-    public int apiCallEstimate() {
-        // 2 Calls so far: load repository + read code frequency
-        return 2;
-    }
-
     public int stargazersCount() {
         return repository.getStargazersCount();
     }

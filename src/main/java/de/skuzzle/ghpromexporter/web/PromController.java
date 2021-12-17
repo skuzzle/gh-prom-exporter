@@ -37,7 +37,8 @@ record PromController(AsynchronousScrapeService scrapeService, SerializedRegistr
                 .flatMap(__ -> serializer.fromCache(scrapeRepositoryRequest, contentType)
                         .switchIfEmpty(
                                 scrapeService.scrapeReactive(gitHubAuthentication, scrapeRepositoryRequest)
-                                        .map(result -> serializer.serializeRegistry(result, contentType))))
+                                        .map(result -> serializer.serializeRegistry(scrapeRepositoryRequest,
+                                                result.toRegistry(scrapeRepositoryRequest), contentType))))
                 .map(serializedMetrics -> ResponseEntity.ok()
                         .contentType(contentType)
                         .body(serializedMetrics))
