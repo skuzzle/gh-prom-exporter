@@ -9,7 +9,7 @@
         <relativePath /> <!-- lookup parent from repository -->
     </parent>
 
-    <groupId>de.skuzzle.promhub</groupId>
+    <groupId>de.skuzzle.ghpromexporter</groupId>
     <artifactId>gh-prom-exporter</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
