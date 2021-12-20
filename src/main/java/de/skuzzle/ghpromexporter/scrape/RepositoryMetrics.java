@@ -1,7 +1,5 @@
 package de.skuzzle.ghpromexporter.scrape;
 
-import java.time.LocalDateTime;
-
 import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.Counter;
 import io.prometheus.client.Summary;
@@ -15,7 +13,6 @@ public record RepositoryMetrics(
         int subscriberCount,
         int watchersCount,
         int sizeInKb,
-        LocalDateTime scrapeTimestamp,
         long scrapeDuration) {
 
     public CollectorRegistry toRegistry(ScrapeRepositoryRequest repository) {
