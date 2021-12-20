@@ -6,12 +6,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
 
-import de.skuzzle.ghpromexporter.clock.ApplicationClock;
 import de.skuzzle.ghpromexporter.github.GitHubAuthentication;
 
 public class ScrapeServiceTest {
 
-    private final ScrapeService scrapeService = new ScrapeService(ApplicationClock.DEFAULT);
+    private final ScrapeService scrapeService = new ScrapeService();
 
     @Test
     void testScrape() throws Exception {
