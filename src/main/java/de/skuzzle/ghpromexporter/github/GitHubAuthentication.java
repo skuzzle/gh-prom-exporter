@@ -13,7 +13,7 @@ import de.skuzzle.ghpromexporter.github.InternalGitHubAuthentication.AnonymousAu
 import de.skuzzle.ghpromexporter.github.InternalGitHubAuthentication.BasicAuthentication;
 import de.skuzzle.ghpromexporter.github.InternalGitHubAuthentication.TokenAuthentication;
 
-public sealed interface GitHubAuthentication extends Serializable permits InternalGitHubAuthentication {
+public interface GitHubAuthentication extends Serializable {
 
     public static GitHubAuthentication fromRequest(ServerHttpRequest request) {
         final String authorization = request.getHeaders().getFirst("Authorization");

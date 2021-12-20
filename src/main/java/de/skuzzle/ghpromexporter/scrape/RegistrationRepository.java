@@ -10,11 +10,15 @@ import reactor.core.publisher.Mono;
 
 interface RegistrationRepository {
 
+    boolean isEmpty();
+
     Flux<RegisteredScraper> registeredScrapers();
 
     void updateRegistration(RegisteredScraper scraper, RepositoryMetrics freshResult);
 
     void deleteRegistration(RegisteredScraper scraper);
+
+    void deleteAll();
 
     Mono<RepositoryMetrics> getExistingOrLoad(RegisteredScraper scraper, Supplier<RepositoryMetrics> loader);
 

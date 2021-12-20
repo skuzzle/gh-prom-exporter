@@ -125,6 +125,13 @@
             <artifactId>reactor-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>de.skuzzle.test</groupId>
+            <artifactId>snapshot-tests</artifactId>
+            <version>0.0.4</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>

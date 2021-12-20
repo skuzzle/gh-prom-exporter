@@ -1,0 +1,1 @@
+java.lang.NullPointerException: Cannot invoke "org.kohsuke.github.GHRepository.getStatistics()" because "repository" is null

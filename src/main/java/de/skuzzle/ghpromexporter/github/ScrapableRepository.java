@@ -50,7 +50,7 @@ public final class ScrapableRepository {
         return repository.getForksCount();
     }
 
-    public int size() {
+    public int sizeInKb() {
         return repository.getSize();
     }
 

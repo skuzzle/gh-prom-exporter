@@ -38,16 +38,23 @@ public class AsynchronousScrapeService {
         });
     }
 
-    @Scheduled(fixedDelay = 1000 * 60 * 30)
+    @Scheduled(
+            fixedDelayString = "${" + ScrapeProperties.INTERVAL + "}",
+            initialDelayString = "${" + ScrapeProperties.INITIAL_DELAY + "}")
     void scheduledScraping() {
-        final Span newSpan = tracer.nextSpan().name("scheduledScrape");
+        log.debug("Running scheduled asynchronous scrape for all registered scrapers...");
+        if (registrationRepository.isEmpty()) {
+            // return early to improve INFO logging
+            return;
+        }
 
+        final Span newSpan = tracer.nextSpan().name("scheduledScrape");
         try (var ws = tracer.withSpan(newSpan.start())) {
             registrationRepository.registeredScrapers()
                     .doOnNext(scraper -> scrapeAndUpdateCache(newSpan, scraper))
+                    .doOnTerminate(() -> log.info("Updated cached metrics for all registered scrapers"))
                     .subscribeOn(Schedulers.boundedElastic())
                     .subscribe();
-            log.info("Updated cached metrics for all registered scrapers");
         } finally {
             newSpan.end();
         }

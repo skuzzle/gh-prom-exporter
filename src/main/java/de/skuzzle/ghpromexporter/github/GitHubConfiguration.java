@@ -3,6 +3,7 @@ package de.skuzzle.ghpromexporter.github;
 import javax.annotation.PostConstruct;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration(proxyBeanMethods = false)
@@ -18,5 +19,10 @@ public class GitHubConfiguration {
     @PostConstruct
     public void configureCache() {
         GitHubFactory.CACHED_GITHUBS = properties.cache().build();
+    }
+
+    @Bean
+    AuthenticationProvider authenticationProvider() {
+        return GitHubAuthentication::fromRequest;
     }
 }

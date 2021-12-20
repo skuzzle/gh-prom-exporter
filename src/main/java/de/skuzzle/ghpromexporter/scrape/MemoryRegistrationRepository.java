@@ -18,6 +18,11 @@ class MemoryRegistrationRepository implements RegistrationRepository {
     }
 
     @Override
+    public boolean isEmpty() {
+        return registeredScrapers.size() == 0;
+    }
+
+    @Override
     public Flux<RegisteredScraper> registeredScrapers() {
         final Set<RegisteredScraper> scrapers = Set.copyOf(registeredScrapers.asMap().keySet());
         return Flux.fromIterable(scrapers);
@@ -31,6 +36,11 @@ class MemoryRegistrationRepository implements RegistrationRepository {
     @Override
     public void deleteRegistration(RegisteredScraper scraper) {
         registeredScrapers.invalidate(scraper);
+    }
+
+    @Override
+    public void deleteAll() {
+        registeredScrapers.invalidateAll();
     }
 
     @Override

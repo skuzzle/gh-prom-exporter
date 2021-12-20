@@ -4,8 +4,12 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import de.skuzzle.ghpromexporter.cache.CacheProperties;
 
-@ConfigurationProperties("scrape")
+@ConfigurationProperties(ScrapeProperties.PREFIX)
 public class ScrapeProperties {
+
+    static final String PREFIX = "scrape";
+    static final String INTERVAL = PREFIX + ".interval";
+    static final String INITIAL_DELAY = PREFIX + ".initialDelay";
 
     private CacheProperties cache = new CacheProperties();
 

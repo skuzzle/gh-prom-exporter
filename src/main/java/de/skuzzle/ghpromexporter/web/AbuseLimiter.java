@@ -5,6 +5,7 @@ import java.net.InetAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.cache.Cache;
 
 import reactor.core.publisher.Mono;
@@ -38,6 +39,11 @@ class AbuseLimiter {
     void recordCall(Throwable e, InetAddress origin) {
         log.warn("Abuse recorded for {}: {}", origin, e.getMessage());
         abusers.put(origin, _0IfNull(abusers.getIfPresent(origin)) + 1);
+    }
+
+    @VisibleForTesting
+    void unblockAll() {
+        abusers.invalidateAll();
     }
 
     private int _0IfNull(Integer value) {
