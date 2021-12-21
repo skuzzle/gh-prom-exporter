@@ -8,11 +8,8 @@
 
 Export your favorite GitHub repositories to Prometheus
 
-Use it _as a service_: See https://gh.skuzzle.de for instructions
-
-or
-
-Use it _on-premise_: `docker pull ghcr.io/skuzzle/gh-prom-exporter/gh-prom-exporter:0.0.5-SNAPSHOT`
+* Use it _as a service_: See https://gh.skuzzle.de for instructions
+* Deploy it _on-premise_: `docker pull ghcr.io/skuzzle/gh-prom-exporter/gh-prom-exporter:0.0.5-SNAPSHOT`
 
 ## On-Premise deployment with docker
 This application can easily be run as a docker container in whatever environment you like:
