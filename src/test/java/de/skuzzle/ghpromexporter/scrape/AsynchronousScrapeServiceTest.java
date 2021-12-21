@@ -16,8 +16,8 @@ import de.skuzzle.ghpromexporter.github.MockRepositoryGitHubAuthentication;
 import reactor.test.StepVerifier;
 
 @SpringBootTest(properties = {
-        "scrape.interval=PT1S",
-        "scrape.initialDelay=PT1S",
+        "scrape.interval=PT0.9S",
+        "scrape.initialDelay=PT0.9S",
 })
 public class AsynchronousScrapeServiceTest {
 
@@ -51,13 +51,13 @@ public class AsynchronousScrapeServiceTest {
 
         // Second scrape: updated after initial delay
         mockedRepo.withStargazerCount(1339);
-        Thread.sleep(1000);
+        Thread.sleep(1100);
 
         expectStargazerCount(authentication, "skuzzle", "test", 1339);
 
         // Third scrape: update after first fixed delay
         mockedRepo.withStargazerCount(1340);
-        Thread.sleep(1000);
+        Thread.sleep(1100);
 
         expectStargazerCount(authentication, "skuzzle", "test", 1340);
     }
@@ -75,7 +75,7 @@ public class AsynchronousScrapeServiceTest {
         // Asynchronous update will remove the scraper because of exception
         authentication.modify().withInaccessibleRepository(mockedRepo);
         mockedRepo.withStargazerCount(1340);
-        Thread.sleep(1000);
+        Thread.sleep(1100);
 
         // Cache miss, update synchronously
         authentication.modify().withRepository(mockedRepo.withStargazerCount(1337));
