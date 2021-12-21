@@ -4,16 +4,16 @@ import java.io.IOException;
 
 import org.kohsuke.github.GitHub;
 
-public class FailingGitHubAuthentication implements GitHubAuthentication {
+public record FailingGitHubAuthentication(boolean anonymous) implements GitHubAuthentication {
 
     private static final long serialVersionUID = 1L;
 
-    public static GitHubAuthentication failingAuthentication() {
-        return new FailingGitHubAuthentication();
+    public static GitHubAuthentication failingAuthentication(boolean anonymous) {
+        return new FailingGitHubAuthentication(anonymous);
     }
 
-    private FailingGitHubAuthentication() {
-        // hidden
+    public static GitHubAuthentication failingAuthentication() {
+        return failingAuthentication(false);
     }
 
     @Override
@@ -23,6 +23,6 @@ public class FailingGitHubAuthentication implements GitHubAuthentication {
 
     @Override
     public boolean isAnonymous() {
-        return false;
+        return anonymous;
     }
 }

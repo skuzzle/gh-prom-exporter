@@ -11,7 +11,9 @@ public class WebProperties {
 
     private CacheProperties abuseCache = new CacheProperties()
             .setExpireAfterWrite(Duration.ofHours(6));
+
     private int abuseLimit = 3;
+    private boolean allowAnonymousScrape = false;
 
     public CacheProperties abuseCache() {
         return this.abuseCache;
@@ -27,5 +29,13 @@ public class WebProperties {
 
     public void setAbuseLimit(int abuseLimit) {
         this.abuseLimit = abuseLimit;
+    }
+
+    public boolean allowAnonymousScrape() {
+        return this.allowAnonymousScrape;
+    }
+
+    public void setAllowAnonymousScrape(boolean allowAnonymousScrape) {
+        this.allowAnonymousScrape = allowAnonymousScrape;
     }
 }
