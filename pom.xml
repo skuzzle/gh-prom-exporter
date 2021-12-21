@@ -208,6 +208,12 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring-boot.version}</version>
                 <configuration>
+                    <image>
+                        <tags>
+                            <tag>latest</tag>
+                            <tag>${project.version}</tag>
+                        </tags>
+                    </image>
                     <docker>
                         <publishRegistry>
                             <url>https://${docker.registry.name}</url>
