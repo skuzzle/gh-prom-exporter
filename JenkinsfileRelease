@@ -39,7 +39,7 @@ pipeline {
         sh 'mvn -B -Prelease gitflow:release-start'
       }
     }
-    stage('Verify Release') {
+    stage('Build and push release') {
       steps {
         sh 'mvn -B -Prelease "-Ddocker.publish.usr=\${DOCKER_REGISTRY_USR}" "-Ddocker.publish.psw=\${DOCKER_REGISTRY_PSW}" -Dspring-boot.build-image.publish=true clean spring-boot:build-image'
       }
@@ -50,7 +50,7 @@ pipeline {
         sh 'git commit -m "Update README and RELEASE_NOTES"'
       }
     }
-    stage('Perform release') {
+    stage('Merge release branch') {
       steps {
         sh "mvn -B gitflow:release-finish"
       }
