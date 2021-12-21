@@ -4,6 +4,7 @@
 [![Twitter Follow](https://img.shields.io/twitter/follow/skuzzleOSS.svg?style=social)](https://twitter.com/skuzzleOSS)
 
 * Configuration option to allow anonymous scraping
+* Minimal documentation for on-premise setup
 
 ```
 docker pull ${docker.image.name}:${project.version}

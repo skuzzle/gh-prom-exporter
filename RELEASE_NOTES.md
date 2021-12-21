@@ -4,7 +4,8 @@
 [![Twitter Follow](https://img.shields.io/twitter/follow/skuzzleOSS.svg?style=social)](https://twitter.com/skuzzleOSS)
 
 * Configuration option to allow anonymous scraping
+* Minimal documentation for on-premise setup
 
 ```
-docker pull ghcr.io/skuzzle/gh-prom-exporter/gh-prom-exporter:0.0.3
+docker pull ghcr.io/skuzzle/gh-prom-exporter/gh-prom-exporter:0.0.4-SNAPSHOT
 ```

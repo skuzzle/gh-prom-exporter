@@ -16,7 +16,7 @@ This application can easily be run as a docker container in whatever environment
 ```
 docker run -p 8080:8080 \
     -e WEB_ALLOWANONYMOUSSCRAPE=true
-    ghcr.io/skuzzle/gh-prom-exporter/gh-prom-exporter:0.0.3-SNAPSHOT
+    ghcr.io/skuzzle/gh-prom-exporter/gh-prom-exporter:0.0.4-SNAPSHOT
 ```
 
 With _anonymous scraping_ allowed, you can now easily view the scrape results directly in the browser by navigating to
@@ -36,7 +36,7 @@ scrape_configs:
 In case you want to enforce authenticated scrapes only, use this configuration instead:
 ```
 docker run -p 8080:8080 \
-    ghcr.io/skuzzle/gh-prom-exporter/gh-prom-exporter:0.0.3-SNAPSHOT
+    ghcr.io/skuzzle/gh-prom-exporter/gh-prom-exporter:0.0.4-SNAPSHOT
 ```
 
 And
