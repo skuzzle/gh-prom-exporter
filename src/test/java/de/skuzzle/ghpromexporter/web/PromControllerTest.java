@@ -70,7 +70,7 @@ public class PromControllerTest {
     void test_successful_initial_scrape(Snapshot snapshot) throws Exception {
         final var serviceCall = getStatsFor("skuzzle", "test-repo");
 
-        authentication.with(successfulAuthenticationForRepository(withName("skuzzle", "test")
+        authentication.with(successfulAuthenticationForRepository(withName("skuzzle", "test-repo")
                 .withStargazerCount(1337)
                 .withForkCount(5)
                 .withOpenIssueCount(2)
@@ -93,7 +93,7 @@ public class PromControllerTest {
         final var serviceCall = getStatsFor("skuzzle", "test-repo");
         webProperties.setAllowAnonymousScrape(true);
 
-        authentication.with(successfulAuthenticationForRepository(withName("skuzzle", "test")
+        authentication.with(successfulAuthenticationForRepository(withName("skuzzle", "test-repo")
                 .withStargazerCount(1337)
                 .withForkCount(5)
                 .withOpenIssueCount(2)
