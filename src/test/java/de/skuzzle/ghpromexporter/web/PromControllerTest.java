@@ -16,7 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import de.skuzzle.ghpromexporter.github.FailingGitHubAuthentication;
 import de.skuzzle.test.snapshots.SnapshotAssertions;
 import de.skuzzle.test.snapshots.SnapshotDsl.Snapshot;
 import reactor.core.publisher.Mono;
@@ -58,12 +57,14 @@ public class PromControllerTest {
     void scrape_anonymously_forbidden() throws Exception {
         final var serviceCall = getStatsFor("skuzzle", "test-repo");
 
-        authentication.with(FailingGitHubAuthentication.failingAuthentication(true), () -> {
+        authentication.with(successfulAuthenticationForRepository(withName("skuzzle", "test-repo")
+                .withStargazerCount(1337)).setAnonymous(true), () -> {
 
-            StepVerifier.create(serviceCall)
-                    .assertNext(response -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED))
-                    .verifyComplete();
-        });
+                    StepVerifier.create(serviceCall)
+                            .assertNext(
+                                    response -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED))
+                            .verifyComplete();
+                });
     }
 
     @Test

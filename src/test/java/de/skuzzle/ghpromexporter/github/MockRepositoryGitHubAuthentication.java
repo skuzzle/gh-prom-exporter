@@ -41,7 +41,7 @@ public final class MockRepositoryGitHubAuthentication implements GitHubAuthentic
 
     @Override
     public boolean isAnonymous() {
-        return false;
+        return anonymous;
     }
 
 }
