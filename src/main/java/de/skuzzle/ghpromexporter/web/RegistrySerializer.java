@@ -17,7 +17,7 @@ class RegistrySerializer {
 
     public String serializeRegistry(CollectorRegistry registry, MediaType mediaType) {
         try (final var stringWriter = new StringWriter()) {
-            if (mediaType.equals(OPEN_METRICS)) {
+            if (mediaType.isCompatibleWith(OPEN_METRICS)) {
                 TextFormat.writeOpenMetrics100(stringWriter, registry.metricFamilySamples());
             } else {
                 TextFormat.write004(stringWriter, registry.metricFamilySamples());
