@@ -6,5 +6,5 @@
 * Apply correct tags to released image
 
 ```
-docker pull ghcr.io/skuzzle/gh-prom-exporter/gh-prom-exporter:0.0.2-SNAPSHOT
+docker pull ghcr.io/skuzzle/gh-prom-exporter/gh-prom-exporter:0.0.2
 ```
