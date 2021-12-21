@@ -1,68 +1,79 @@
 pipeline {
-  agent {
-    docker {
-      image 'maven:3.8.3-openjdk-17'
-      args '-u 1000:999 -v /home/jenkins/.m2:/var/maven/.m2 -v /home/jenkins/.gnupg:/.gnupg -v /var/run/docker.sock:/var/run/docker.sock:ro -e MAVEN_CONFIG=/var/maven/.m2 -e MAVEN_OPTS=-Duser.home=/var/maven'
-    }
-  }
+  agent none
   environment {
-    GITHUB = credentials('Github-Username-Pw')
     DOCKER_REGISTRY = credentials('github_docker_registry')
-    GITHUB_RELEASE_TOKEN = credentials('github_registry_release')
-    GIT_ASKPASS='./.git-askpass'
-    VERSION = 'latest'
   }
   stages {
-    stage ('Ensure dev branch') {
-      when {
-        expression {
-            return env.BRANCH_NAME != 'dev';
+
+    stage('Build and release') {
+    
+      agent {
+        docker {
+          image 'maven:3.8.3-openjdk-17'
+          args '-u 1000:999 -v /home/jenkins/.m2:/var/maven/.m2 -v /home/jenkins/.gnupg:/.gnupg -v /var/run/docker.sock:/var/run/docker.sock:ro -e MAVEN_CONFIG=/var/maven/.m2 -e MAVEN_OPTS=-Duser.home=/var/maven'
         }
       }
-      steps {
-        error("Releasing is only possible from dev branch")
+      environment {
+        GITHUB = credentials('Github-Username-Pw')
+        GITHUB_RELEASE_TOKEN = credentials('github_registry_release')
+        GIT_ASKPASS='./.git-askpass'
       }
-    }
-    stage ('Set Git Information') {
-      steps {
-        sh 'echo \'echo \$GITHUB_PSW\' > ./.git-askpass'
-        sh 'chmod +x ./.git-askpass'
-        sh 'git config url."https://api@github.com/".insteadOf "https://github.com/"'
-        sh 'git config url."https://ssh@github.com/".insteadOf "ssh://git@github.com/"'
-        sh 'git config url."https://git@github.com/".insteadOf "git@github.com:"'
-        sh 'git config user.email "build@taddiken.online"'
-        sh 'git config user.name "Jenkins"'
-      }
-    }
-    stage('Create release branch') {
-      steps {
-        sh 'mvn -B -Prelease gitflow:release-start'
-      }
-    }
-    stage('Build and push release') {
-      steps {
-        sh 'mvn -B -Prelease "-Ddocker.publish.usr=\${DOCKER_REGISTRY_USR}" "-Ddocker.publish.psw=\${DOCKER_REGISTRY_PSW}" -Dspring-boot.build-image.publish=true clean spring-boot:build-image'
-      }
-    }
-    stage('Update readme') {
-      steps {
-        sh 'git add README.md RELEASE_NOTES.md'
-        sh 'git commit -m "Update README and RELEASE_NOTES"'
-      }
-    }
-    stage('Merge release branch') {
-      steps {
-        sh "mvn -B gitflow:release-finish"
-      }
-    }
-    stage('Create GitHub release') {
-      steps {
-        sh 'git checkout master'
-        sh "mvn -B github-release:github-release -Dgithub.release-token=${GITHUB_RELEASE_TOKEN}"
+      stages {
+        stage ('Ensure dev branch') {
+          when {
+            expression {
+                return env.BRANCH_NAME != 'dev';
+            }
+          }
+          steps {
+            error("Releasing is only possible from dev branch")
+          }
+        }
+        stage ('Set Git Information') {
+          steps {
+            sh 'echo \'echo \$GITHUB_PSW\' > ./.git-askpass'
+            sh 'chmod +x ./.git-askpass'
+            sh 'git config url."https://api@github.com/".insteadOf "https://github.com/"'
+            sh 'git config url."https://ssh@github.com/".insteadOf "ssh://git@github.com/"'
+            sh 'git config url."https://git@github.com/".insteadOf "git@github.com:"'
+            sh 'git config user.email "build@taddiken.online"'
+            sh 'git config user.name "Jenkins"'
+          }
+        }
+        stage('Create release branch') {
+          steps {
+            sh 'mvn -B -Prelease gitflow:release-start'
+          }
+        }
+        stage('Build and push release') {
+          steps {
+            sh 'mvn -B -Prelease "-Ddocker.publish.usr=\${DOCKER_REGISTRY_USR}" "-Ddocker.publish.psw=\${DOCKER_REGISTRY_PSW}" -Dspring-boot.build-image.publish=true clean spring-boot:build-image'
+          }
+        }
+        stage('Update readme') {
+          steps {
+            sh 'git add README.md RELEASE_NOTES.md'
+            sh 'git commit -m "Update README and RELEASE_NOTES"'
+          }
+        }
+        stage('Merge release branch') {
+          steps {
+            sh "mvn -B gitflow:release-finish"
+          }
+        }
+        stage('Create GitHub release') {
+          steps {
+            sh 'git checkout master'
+            sh "mvn -B github-release:github-release -Dgithub.release-token=${GITHUB_RELEASE_TOKEN}"
+          }
+        }
       }
     }
     stage('Deploy to production') {
       agent any
+      environment {
+        VERSION = 'latest'
+      }
       steps {
         sh 'docker login -u ${DOCKER_REGISTRY_USR} -p ${DOCKER_REGISTRY_PSW} ghcr.io'
         sh 'docker stack deploy --compose-file swarm-stack/production.yml --prune --with-registry-auth gh-prom-exporter'

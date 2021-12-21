@@ -11,7 +11,7 @@
 
     <groupId>de.skuzzle.ghpromexporter</groupId>
     <artifactId>gh-prom-exporter</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.3</version>
 
     <name>gh-prom-exporter</name>
     <description>Export GitHub repository metrics in prometheus format</description>
