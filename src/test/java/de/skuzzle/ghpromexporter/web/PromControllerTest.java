@@ -35,7 +35,8 @@ public class PromControllerTest {
     private int localPort;
 
     @AfterEach
-    void setup() {
+    void cleanup() {
+        webProperties.setAllowAnonymousScrape(false);
         abuseLimiter.unblockAll();
     }
 
@@ -53,10 +54,24 @@ public class PromControllerTest {
     }
 
     @Test
+    void scrape_anonymously_forbidden() throws Exception {
+        final var serviceCall = getStatsFor("skuzzle", "test-repo");
+
+        authentication.with(successfulAuthenticationForRepository(withName("skuzzle", "test-repo")
+                .withStargazerCount(1337)).setAnonymous(true), () -> {
+
+                    StepVerifier.create(serviceCall)
+                            .assertNext(
+                                    response -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED))
+                            .verifyComplete();
+                });
+    }
+
+    @Test
     void test_successful_initial_scrape(Snapshot snapshot) throws Exception {
         final var serviceCall = getStatsFor("skuzzle", "test-repo");
 
-        authentication.with(successfulAuthenticationForRepository(withName("skuzzle", "test")
+        authentication.with(successfulAuthenticationForRepository(withName("skuzzle", "test-repo")
                 .withStargazerCount(1337)
                 .withForkCount(5)
                 .withOpenIssueCount(2)
@@ -65,6 +80,29 @@ public class PromControllerTest {
                 .withAdditions(50)
                 .withDeletions(-20)
                 .withSizeInKb(127)), () -> {
+
+                    StepVerifier.create(serviceCall)
+                            .assertNext(response -> snapshot.assertThat(response.getBody())
+                                    .as(canonicalPrometheusRegistry())
+                                    .matchesSnapshotText())
+                            .verifyComplete();
+                });
+    }
+
+    @Test
+    void test_successful_anonymous_scrape(Snapshot snapshot) throws Exception {
+        final var serviceCall = getStatsFor("skuzzle", "test-repo");
+        webProperties.setAllowAnonymousScrape(true);
+
+        authentication.with(successfulAuthenticationForRepository(withName("skuzzle", "test-repo")
+                .withStargazerCount(1337)
+                .withForkCount(5)
+                .withOpenIssueCount(2)
+                .withWatchersCount(1)
+                .withSubscriberCount(4)
+                .withAdditions(50)
+                .withDeletions(-20)
+                .withSizeInKb(127)).setAnonymous(true), () -> {
 
                     StepVerifier.create(serviceCall)
                             .assertNext(response -> snapshot.assertThat(response.getBody())

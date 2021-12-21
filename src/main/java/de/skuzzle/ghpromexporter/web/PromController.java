@@ -21,9 +21,8 @@ record PromController(
         AuthenticationProvider authenticationProvider,
         AsynchronousScrapeService scrapeService,
         RegistrySerializer serializer,
-        AbuseLimiter abuseLimiter) {
-
-    private static final String CACHE_STATUS_HEADER = "X-Cache-Status";
+        AbuseLimiter abuseLimiter,
+        WebProperties properties) {
 
     @GetMapping(path = "{user}/{repo}")
     public Mono<ResponseEntity<String>> createStats(
@@ -33,7 +32,7 @@ record PromController(
 
         final GitHubAuthentication gitHubAuthentication = authenticationProvider.authenticateRequest(request);
 
-        if (gitHubAuthentication.isAnonymous()) {
+        if (gitHubAuthentication.isAnonymous() && !properties.allowAnonymousScrape()) {
             return Mono.just(ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body("Anonymous scraping is not allowed. Please include a GitHub API key in your request"));
         }
@@ -57,7 +56,6 @@ record PromController(
         return scrapeService.scrapeReactive(authentication, request)
                 .map(result -> serializer.serializeRegistry(result.toRegistry(request), contentType))
                 .map(serializedMetrics -> ResponseEntity.ok()
-                        .header(CACHE_STATUS_HEADER, "miss")
                         .contentType(contentType)
                         .body(serializedMetrics));
     }
