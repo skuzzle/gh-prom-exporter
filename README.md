@@ -8,21 +8,23 @@
 
 Export your favorite GitHub repositories to Prometheus
 
-Use it _as a service_: https://gh.skuzzle.de
+Use it _as a service_: See https://gh.skuzzle.de for instructions
+or
+Use it _on-premise_: `docker pull ghcr.io/skuzzle/gh-prom-exporter/gh-prom-exporter:0.0.5-SNAPSHOT`
 
 ## On-Premise deployment with docker
 This application can easily be run as a docker container in whatever environment you like:
 
 ```
 docker run -p 8080:8080 \
-    -e WEB_ALLOWANONYMOUSSCRAPE=true
-    ghcr.io/skuzzle/gh-prom-exporter/gh-prom-exporter:0.0.4
+    -e WEB_ALLOWANONYMOUSSCRAPE=true \
+    ghcr.io/skuzzle/gh-prom-exporter/gh-prom-exporter:0.0.5-SNAPSHOT
 ```
 
 With _anonymous scraping_ allowed, you can now easily view the scrape results directly in the browser by navigating to
 `https://your.docker.host:8080/YOUR-GITHUB-USERNAME/YOUR-REPOSITORY`.
 
-The scraped repository can just as easiy be added as static scrape target to your prometheus' scrape configs: 
+The scraped repository can just as easy be added as static scrape target to your prometheus' scrape configs: 
 
 ```
 scrape_configs:
@@ -36,7 +38,7 @@ scrape_configs:
 In case you want to enforce authenticated scrapes only, use this configuration instead:
 ```
 docker run -p 8080:8080 \
-    ghcr.io/skuzzle/gh-prom-exporter/gh-prom-exporter:0.0.4
+    ghcr.io/skuzzle/gh-prom-exporter/gh-prom-exporter:0.0.5-SNAPSHOT
 ```
 
 And
