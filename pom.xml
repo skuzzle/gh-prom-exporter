@@ -11,10 +11,10 @@
 
     <groupId>de.skuzzle.ghpromexporter</groupId>
     <artifactId>gh-prom-exporter</artifactId>
-    <version>0.0.2-SNAPSHOT</version>
+    <version>0.0.1-SNAPSHOT</version>
 
     <name>gh-prom-exporter</name>
-    <description>Demo project for Spring Boot</description>
+    <description>Export GitHub repository metrics in prometheus format</description>
 
     <properties>
         <java.version>17</java.version>
