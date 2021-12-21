@@ -9,7 +9,9 @@
 Export your favorite GitHub repositories to Prometheus
 
 Use it _as a service_: See https://gh.skuzzle.de for instructions
+
 or
+
 Use it _on-premise_: `docker pull ${docker.image.name}:${project.version}`
 
 ## On-Premise deployment with docker
