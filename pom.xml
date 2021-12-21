@@ -32,7 +32,7 @@
         <github.name>gh-prom-exporter</github.name>
 
         <docker.registry.name>ghcr.io</docker.registry.name>
-        <spring-boot.build-image.imageName>${docker.registry.name}/${github.user}/${github.name}/${project.artifactId}</spring-boot.build-image.imageName>
+        <docker.image.name>${docker.registry.name}/${github.user}/${github.name}/${project.artifactId}</docker.image.name>
 
         <spring-boot.version>2.6.1</spring-boot.version>
         <spring-cloud.version>2021.0.0-RC1</spring-cloud.version>
@@ -209,8 +209,10 @@
                 <version>${spring-boot.version}</version>
                 <configuration>
                     <image>
+                        <name>${docker.image.name}</name>
                         <tags>
-                            <tag>${project.version}</tag>
+                            <tag>${docker.image.name}:${project.version}</tag>
+                            <tag>${docker.image.name}:latest</tag>
                         </tags>
                     </image>
                     <docker>

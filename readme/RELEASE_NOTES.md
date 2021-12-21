@@ -6,5 +6,5 @@
 * Apply correct tags to released image
 
 ```
-docker pull ${spring-boot.build-image.imageName}:${project.version}
+docker pull ${docker.image.name}:${project.version}
 ```
