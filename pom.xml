@@ -3,24 +3,42 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.6.0</version>
+        <groupId>de.skuzzle</groupId>
+        <artifactId>skuzzle-parent</artifactId>
+        <version>3.0.2-SNAPSHOT</version>
         <relativePath /> <!-- lookup parent from repository -->
     </parent>
 
     <groupId>de.skuzzle.ghpromexporter</groupId>
     <artifactId>gh-prom-exporter</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
 
     <name>gh-prom-exporter</name>
-    <description>Demo project for Spring Boot</description>
+    <description>Export GitHub repository metrics in prometheus format</description>
 
     <properties>
-        <spring-cloud.version>2021.0.0-RC1</spring-cloud.version>
         <java.version>17</java.version>
+        <!-- Enable Code coverage -->
+        <coveralls.skip>false</coveralls.skip>
+        <!-- Skip dependency analysis (not compatible with Java 17 by now) -->
+        <mdep.analyze.skip>true</mdep.analyze.skip>
+        <!-- Skip javadoc (not needed and also not compatible with Java 17 by now) -->
+        <maven.javadoc.skip>true</maven.javadoc.skip>
+        <!-- Do not deploy to Maven Central -->
+        <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
+        <!-- Do not sign jars -->
+        <gpg.skip>true</gpg.skip>
+        
+        <github.name>gh-prom-exporter</github.name>
+
+        <docker.registry.name>ghcr.io</docker.registry.name>
+        <spring-boot.build-image.imageName>${docker.registry.name}/${github.user}/${github.name}/${project.artifactId}</spring-boot.build-image.imageName>
+
+        <spring-boot.version>2.6.1</spring-boot.version>
+        <spring-cloud.version>2021.0.0-RC1</spring-cloud.version>
         <guava.version>31.0.1-jre</guava.version>
         <github-api.version>1.135</github-api.version>
+        <snapshottest.version>0.0.4</snapshottest.version>
     </properties>
 
     <repositories>
@@ -41,6 +59,13 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
                 <version>${spring-cloud.version}</version>
@@ -56,6 +81,12 @@
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.skuzzle.test</groupId>
+                <artifactId>snapshot-tests</artifactId>
+                <version>${snapshottest.version}</version>
+                <scope>test</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -129,7 +160,6 @@
         <dependency>
             <groupId>de.skuzzle.test</groupId>
             <artifactId>snapshot-tests</artifactId>
-            <version>0.0.4</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -137,16 +167,50 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <phase>validate</phase>
+                        <configuration>
+                            <outputDirectory>${basedir}</outputDirectory>
+                            <overwrite>true</overwrite>
+                            <resources>
+                                <resource>
+                                    <directory>readme/</directory>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.amashchenko.maven.plugin</groupId>
+                <artifactId>gitflow-maven-plugin</artifactId>
+                <configuration>
+                    <postReleaseGoals>clean</postReleaseGoals>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.ragedunicorn.tools.maven</groupId>
+                <artifactId>github-release-maven-plugin</artifactId>
+                <configuration>
+                    <releaseNotes>RELEASE_NOTES.md</releaseNotes>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring-boot.version}</version>
                 <configuration>
-                    <image>
-                        <name>ghcr.io/skuzzle/gh-prom-exporter/${project.artifactId}</name>
-                    </image>
-                    <network>host</network>
                     <docker>
                         <publishRegistry>
-                            <url>https://ghcr.io</url>
+                            <url>https://${docker.registry.name}</url>
                             <username>${docker.publish.usr}</username>
                             <password>${docker.publish.psw}</password>
                             <email>simon@taddiken.online</email>
@@ -156,5 +220,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
