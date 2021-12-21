@@ -7,5 +7,5 @@
 * Minimal documentation for on-premise setup
 
 ```
-docker pull ghcr.io/skuzzle/gh-prom-exporter/gh-prom-exporter:0.0.4-SNAPSHOT
+docker pull ghcr.io/skuzzle/gh-prom-exporter/gh-prom-exporter:0.0.4
 ```
