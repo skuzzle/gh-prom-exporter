@@ -43,23 +43,19 @@ record PromController(
         }
 
         final InetAddress origin = request.getRemoteAddress().getAddress();
-        final MediaType contentType = determineContentType(request);
+        final MediaType contentType = serializer.determineMediaType(request.getHeaders().getAccept());
 
         final MultipleRepositories multipleRepositories = MultipleRepositories.parse(owner, repositories);
         log.info("Request from '{}' to scrape '{}'", gitHubAuthentication, multipleRepositories);
 
         return abuseLimiter.blockAbusers(origin)
                 .flatMap(__ -> freshResponse(gitHubAuthentication, multipleRepositories, contentType))
-                .doOnError(e -> abuseLimiter.recordCall(e, origin))
-                .onErrorResume(e -> Mono.just(ResponseEntity.badRequest().body(e.getMessage())))
+                .doOnError(exception -> abuseLimiter.recordFailedCall(exception, origin))
+                .onErrorResume(exception -> Mono.just(ResponseEntity.badRequest().body(exception.getMessage())))
                 .switchIfEmpty(
                         Mono.fromSupplier(() -> ResponseEntity
                                 .status(HttpStatus.FORBIDDEN)
                                 .body("Your IP '%s' has exceeded the abuse limit\n".formatted(origin))));
-    }
-
-    private MediaType determineContentType(ServerHttpRequest request) {
-        return serializer.determineMediaType(request.getHeaders().getAccept());
     }
 
     private Mono<ResponseEntity<String>> freshResponse(GitHubAuthentication authentication,

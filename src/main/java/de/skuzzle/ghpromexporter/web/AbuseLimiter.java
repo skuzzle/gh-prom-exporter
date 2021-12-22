@@ -36,7 +36,7 @@ class AbuseLimiter {
         return true;
     }
 
-    void recordCall(Throwable e, InetAddress origin) {
+    void recordFailedCall(Throwable e, InetAddress origin) {
         log.warn("Abuse recorded for {}: {}", origin, e.getMessage());
         abusers.put(origin, _0IfNull(abusers.getIfPresent(origin)) + 1);
     }
