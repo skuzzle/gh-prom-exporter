@@ -6,7 +6,6 @@ import org.kohsuke.github.GitHub;
 
 public final class MockRepositoryGitHubAuthentication implements GitHubAuthentication {
 
-    private static final long serialVersionUID = 7101792420516373175L;
     private final MockGitHubBuilder modify;
     private boolean anonymous = false;
 

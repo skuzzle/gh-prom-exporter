@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -41,7 +40,7 @@ public class AsynchronousScrapeServiceTest {
     }
 
     @Test
-    void metrics_should_be_update_asynchronously() throws Exception {
+    void metrics_should_be_updated_asynchronously() throws Exception {
         final MockRepositoryBuilder mockedRepo = MockRepositoryBuilder.withName("skuzzle", "test")
                 .withStargazerCount(1337);
         final GitHubAuthentication authentication = successfulAuthenticationForRepository(mockedRepo);
@@ -63,7 +62,6 @@ public class AsynchronousScrapeServiceTest {
     }
 
     @Test
-    @Disabled("modify() is not idempotent")
     void registration_should_be_terminated_on_scrape_error() throws Exception {
         final MockRepositoryBuilder mockedRepo = MockRepositoryBuilder.withName("skuzzle", "test")
                 .withStargazerCount(1337);

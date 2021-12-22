@@ -34,7 +34,7 @@ public class MockRepositoryBuilder {
         }
     }
 
-    public String getFullname() {
+    public String fullname() {
         return owner + "/" + name;
     }
 
