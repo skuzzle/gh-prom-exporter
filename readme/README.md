@@ -21,9 +21,10 @@ docker run -p 8080:8080 \
 ```
 
 With _anonymous scraping_ allowed, you can now easily view the scrape results directly in the browser by navigating to
-`https://your.docker.host:8080/YOUR-GITHUB-USERNAME/YOUR-REPOSITORY`.
+`http://localhost:8080/YOUR-GITHUB-USERNAME/YOUR-REPOSITORY`.
 
-The scraped repository can just as easy be added as static scrape target to your prometheus' scrape configs: 
+The scraped repository can just as easily be added as static scrape target to your prometheus' scrape configs. You can
+also scrape multiple repositories of the same owner at once: 
 
 ```
 scrape_configs:
@@ -40,7 +41,7 @@ docker run -p 8080:8080 \
     ${docker.image.name}:${project.version}
 ```
 
-And
+Scraping now requires a GitHub access token, otherwise the service will respond with 401/Unauthorized. 
 
 ```
 scrape_configs:

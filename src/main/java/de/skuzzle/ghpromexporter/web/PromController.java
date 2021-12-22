@@ -2,6 +2,8 @@ package de.skuzzle.ghpromexporter.web;
 
 import java.net.InetAddress;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +27,8 @@ record PromController(
         AbuseLimiter abuseLimiter,
         WebProperties properties) {
 
+    private static final Logger log = LoggerFactory.getLogger(PromController.class);
+
     @GetMapping(path = "{owner}/{repositories}")
     public Mono<ResponseEntity<String>> createStats(
             @PathVariable String owner,
@@ -39,9 +43,10 @@ record PromController(
         }
 
         final InetAddress origin = request.getRemoteAddress().getAddress();
-        final MediaType contentType = MediaType.TEXT_PLAIN;// determineContentType(request);
+        final MediaType contentType = determineContentType(request);
 
         final MultipleRepositories multipleRepositories = MultipleRepositories.parse(owner, repositories);
+        log.info("Request from '{}' to scrape '{}'", gitHubAuthentication, multipleRepositories);
 
         return abuseLimiter.blockAbusers(origin)
                 .flatMap(__ -> freshResponse(gitHubAuthentication, multipleRepositories, contentType))
@@ -51,6 +56,10 @@ record PromController(
                         Mono.fromSupplier(() -> ResponseEntity
                                 .status(HttpStatus.FORBIDDEN)
                                 .body("Your IP '%s' has exceeded the abuse limit\n".formatted(origin))));
+    }
+
+    private MediaType determineContentType(ServerHttpRequest request) {
+        return serializer.determineMediaType(request.getHeaders().getAccept());
     }
 
     private Mono<ResponseEntity<String>> freshResponse(GitHubAuthentication authentication,

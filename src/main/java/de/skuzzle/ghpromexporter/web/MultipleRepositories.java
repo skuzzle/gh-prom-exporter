@@ -25,4 +25,9 @@ final class MultipleRepositories {
         return Flux.fromStream(repositories.stream()
                 .map(repository -> ScrapeRepositoryRequest.of(owner, repository)));
     }
+
+    @Override
+    public String toString() {
+        return "owner=%s, repositories=%s".formatted(owner, repositories);
+    }
 }
