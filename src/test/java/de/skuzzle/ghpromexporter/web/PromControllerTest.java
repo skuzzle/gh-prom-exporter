@@ -6,23 +6,21 @@ import static de.skuzzle.ghpromexporter.github.MockRepositoryGitHubAuthenticatio
 import static de.skuzzle.ghpromexporter.web.CanonicalPrometheusRegistrySerializer.canonicalPrometheusRegistry;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.Map;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import de.skuzzle.ghpromexporter.github.GitHubAuthentication;
 import de.skuzzle.test.snapshots.SnapshotAssertions;
 import de.skuzzle.test.snapshots.SnapshotDsl.Snapshot;
-import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-@SnapshotAssertions(forceUpdateSnapshots = false)
+@SnapshotAssertions
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, properties = "web.abuseCache.expireAfterWrite=1s")
 public class PromControllerTest {
 
@@ -32,8 +30,8 @@ public class PromControllerTest {
     private WebProperties webProperties;
     @Autowired
     private AbuseLimiter abuseLimiter;
-    @LocalServerPort
-    private int localPort;
+    @Autowired
+    private TestClient testClient;
 
     @AfterEach
     void cleanup() {
@@ -41,22 +39,9 @@ public class PromControllerTest {
         abuseLimiter.unblockAll();
     }
 
-    private WebClient client() {
-        return WebClient.builder()
-                .baseUrl("http://localhost:" + localPort)
-                .build();
-    }
-
-    private Mono<ResponseEntity<String>> getStatsFor(String owner, String repository) {
-        return client().get().uri("/{owner}/{repository}", owner, repository)
-                .retrieve()
-                .onStatus(HttpStatus::is4xxClientError, response -> Mono.empty())
-                .toEntity(String.class);
-    }
-
     @Test
     void scrape_anonymously_forbidden() throws Exception {
-        final var serviceCall = getStatsFor("skuzzle", "test-repo");
+        final var serviceCall = testClient.getStatsFor("skuzzle", "test-repo");
         final GitHubAuthentication gitHubAuthentication = successfulAuthenticationForRepository(
                 withName("skuzzle", "test-repo")
                         .withStargazerCount(1337))
@@ -64,15 +49,14 @@ public class PromControllerTest {
 
         authentication.with(gitHubAuthentication, () -> {
             StepVerifier.create(serviceCall)
-                    .assertNext(
-                            response -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED))
+                    .assertNext(response -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED))
                     .verifyComplete();
         });
     }
 
     @Test
     void scrape_multiple_repositories(Snapshot snapshot) throws Exception {
-        final var serviceCall = getStatsFor("skuzzle", "test-repo1,test-repo2");
+        final var serviceCall = testClient.getStatsFor("skuzzle", "test-repo1,test-repo2");
         final var gitHubAuthentication = successfulAuthenticationForRepository(
                 withName("skuzzle", "test-repo1")
                         .withForkCount(5));
@@ -89,7 +73,7 @@ public class PromControllerTest {
 
     @Test
     void test_successful_initial_scrape(Snapshot snapshot) throws Exception {
-        final var serviceCall = getStatsFor("skuzzle", "test-repo");
+        final var serviceCall = testClient.getStatsFor("skuzzle", "test-repo");
         final GitHubAuthentication gitHubAuthentication = successfulAuthenticationForRepository(
                 withName("skuzzle", "test-repo")
                         .withStargazerCount(1337)
@@ -104,16 +88,50 @@ public class PromControllerTest {
         authentication.with(gitHubAuthentication, () -> {
 
             StepVerifier.create(serviceCall)
-                    .assertNext(response -> snapshot.assertThat(response.getBody())
-                            .as(canonicalPrometheusRegistry())
-                            .matchesSnapshotText())
+                    .assertNext(response -> {
+                        assertThat(response.getHeaders().getContentType()).isEqualTo(RegistrySerializer.FORMAT_004);
+
+                        snapshot.assertThat(response.getBody())
+                                .as(canonicalPrometheusRegistry())
+                                .matchesSnapshotText();
+                    })
+                    .verifyComplete();
+        });
+    }
+
+    @Test
+    void test_successful_scrape_open_metrics(Snapshot snapshot) throws Exception {
+        final var serviceCall = testClient.getStatsFor("skuzzle", "test-repo",
+                Map.of("Accept", "application/openmetrics-text"));
+
+        final GitHubAuthentication gitHubAuthentication = successfulAuthenticationForRepository(
+                withName("skuzzle", "test-repo")
+                        .withStargazerCount(1337)
+                        .withForkCount(5)
+                        .withOpenIssueCount(2)
+                        .withWatchersCount(1)
+                        .withSubscriberCount(4)
+                        .withAdditions(50)
+                        .withDeletions(-20)
+                        .withSizeInKb(127));
+
+        authentication.with(gitHubAuthentication, () -> {
+
+            StepVerifier.create(serviceCall)
+                    .assertNext(response -> {
+                        assertThat(response.getHeaders().getContentType()).isEqualTo(RegistrySerializer.OPEN_METRICS);
+
+                        snapshot.assertThat(response.getBody())
+                                .as(canonicalPrometheusRegistry())
+                                .matchesSnapshotText();
+                    })
                     .verifyComplete();
         });
     }
 
     @Test
     void test_successful_anonymous_scrape(Snapshot snapshot) throws Exception {
-        final var serviceCall = getStatsFor("skuzzle", "test-repo");
+        final var serviceCall = testClient.getStatsFor("skuzzle", "test-repo");
         webProperties.setAllowAnonymousScrape(true);
         final GitHubAuthentication gitHubAuthentication = successfulAuthenticationForRepository(
                 withName("skuzzle", "test-repo")
@@ -138,7 +156,7 @@ public class PromControllerTest {
 
     @Test
     void client_should_be_blocked_when_abuse_limit_is_exceeded() throws Exception {
-        final var serviceCall = getStatsFor("skuzzle", "test-repo");
+        final var serviceCall = testClient.getStatsFor("skuzzle", "test-repo");
 
         authentication.with(failingAuthentication(), () -> {
             for (int i = 0; i < webProperties.abuseLimit(); ++i) {
@@ -157,7 +175,7 @@ public class PromControllerTest {
 
     @Test
     void client_should_be_unblocked_after_a_while() throws Exception {
-        final var serviceCall = getStatsFor("skuzzle", "test-repo");
+        final var serviceCall = testClient.getStatsFor("skuzzle", "test-repo");
 
         authentication.with(failingAuthentication(), () -> {
             for (int i = 0; i < webProperties.abuseLimit(); ++i) {

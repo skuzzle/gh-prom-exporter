@@ -1,0 +1,28 @@
+# EOF
+# HELP github_additions Sum of additions over the last 52 weeks
+# HELP github_deletions Negative sum of deletions over the last 52 weeks
+# HELP github_forks The repository's fork count
+# HELP github_open_issues The repository's open issue count
+# HELP github_scrape_duration Duration of a single scrape
+# HELP github_size The repository's size in KB
+# HELP github_stargazers The repository's stargazer count
+# HELP github_subscribers The repository's subscriber count
+# HELP github_watchers The repository's watcher count
+# TYPE github_additions counter
+# TYPE github_deletions counter
+# TYPE github_forks counter
+# TYPE github_open_issues counter
+# TYPE github_scrape_duration summary
+# TYPE github_size counter
+# TYPE github_stargazers counter
+# TYPE github_subscribers counter
+# TYPE github_watchers counter
+github_additions_total{owner="skuzzle",repository="test-repo"} 50.0
+github_deletions_total{owner="skuzzle",repository="test-repo"} 20.0
+github_forks_total{owner="skuzzle",repository="test-repo"} 5.0
+github_open_issues_total{owner="skuzzle",repository="test-repo"} 2.0
+github_scrape_duration_count{owner="skuzzle",repository="test-repo"} 1.0
+github_size_total{owner="skuzzle",repository="test-repo"} 127.0
+github_stargazers_total{owner="skuzzle",repository="test-repo"} 1337.0
+github_subscribers_total{owner="skuzzle",repository="test-repo"} 4.0
+github_watchers_total{owner="skuzzle",repository="test-repo"} 1.0
