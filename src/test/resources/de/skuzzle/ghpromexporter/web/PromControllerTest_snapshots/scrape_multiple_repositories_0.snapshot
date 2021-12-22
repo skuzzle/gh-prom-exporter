@@ -34,12 +34,21 @@
 # TYPE github_subscribers_total counter
 # TYPE github_watchers_created gauge
 # TYPE github_watchers_total counter
-github_additions_total{owner="skuzzle",repository="test-repo",} 50.0
-github_deletions_total{owner="skuzzle",repository="test-repo",} 20.0
-github_forks_total{owner="skuzzle",repository="test-repo",} 5.0
-github_open_issues_total{owner="skuzzle",repository="test-repo",} 2.0
-github_scrape_duration_count{owner="skuzzle",repository="test-repo",} 1.0
-github_size_total{owner="skuzzle",repository="test-repo",} 127.0
-github_stargazers_total{owner="skuzzle",repository="test-repo",} 1337.0
-github_subscribers_total{owner="skuzzle",repository="test-repo",} 4.0
-github_watchers_total{owner="skuzzle",repository="test-repo",} 1.0
+github_additions_total{owner="skuzzle",repository="test-repo1",} 0.0
+github_additions_total{owner="skuzzle",repository="test-repo2",} 0.0
+github_deletions_total{owner="skuzzle",repository="test-repo1",} 0.0
+github_deletions_total{owner="skuzzle",repository="test-repo2",} 0.0
+github_forks_total{owner="skuzzle",repository="test-repo1",} 5.0
+github_forks_total{owner="skuzzle",repository="test-repo2",} 0.0
+github_open_issues_total{owner="skuzzle",repository="test-repo1",} 0.0
+github_open_issues_total{owner="skuzzle",repository="test-repo2",} 0.0
+github_scrape_duration_count{owner="skuzzle",repository="test-repo1",} 1.0
+github_scrape_duration_count{owner="skuzzle",repository="test-repo2",} 1.0
+github_size_total{owner="skuzzle",repository="test-repo1",} 0.0
+github_size_total{owner="skuzzle",repository="test-repo2",} 0.0
+github_stargazers_total{owner="skuzzle",repository="test-repo1",} 0.0
+github_stargazers_total{owner="skuzzle",repository="test-repo2",} 1337.0
+github_subscribers_total{owner="skuzzle",repository="test-repo1",} 0.0
+github_subscribers_total{owner="skuzzle",repository="test-repo2",} 0.0
+github_watchers_total{owner="skuzzle",repository="test-repo1",} 0.0
+github_watchers_total{owner="skuzzle",repository="test-repo2",} 0.0

@@ -105,8 +105,8 @@
         <li>
             <b>I don't want to use the public service. Can I host this on-premise?</b>
             <p>
-            Not yet, but technically everything is prepared so that you can run this application yourself in a 
-            environment that supports docker containers.
+            Yes, you can run this exact application yourself using Docker. You can find a detailed explanation on 
+            <a href="https://github.com/skuzzle/gh-prom-exporter">GitHub</a>.
             </p>
         </li>
         <li>
@@ -171,6 +171,7 @@
 
     <footer>
         <p>by <a href="https://simon.taddiken.online">Simon Taddiken</a></p>
+        <p>Application: <em th:text="${@environment.getProperty('application.formatted-version')}"></em></p>
     </footer>
 </body>
 </html>
