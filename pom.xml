@@ -31,6 +31,8 @@
         
         <github.name>gh-prom-exporter</github.name>
 
+        <docker.publish.usr>CHANGE_ME</docker.publish.usr>
+        <docker.publish.psw>CHANGE_ME</docker.publish.psw>
         <docker.registry.name>ghcr.io</docker.registry.name>
         <docker.image.name>${docker.registry.name}/${github.user}/${github.name}/${project.artifactId}</docker.image.name>
 
