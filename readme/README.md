@@ -29,7 +29,7 @@ The scraped repository can just as easy be added as static scrape target to your
 scrape_configs:
 - job_name: CHANGE_ME
   scrape_interval: 2m
-  metrics_path: /YOUR-GITHUB-USERNAME/YOUR-REPOSITORY
+  metrics_path: /YOUR-GITHUB-USERNAME/YOUR-REPOSITORY1,YOUR-REPOSITORY2
   static_configs:
     - targets: ['your.docker.host:8080']
 ```

@@ -13,7 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 import de.skuzzle.ghpromexporter.github.AuthenticationProvider;
 import de.skuzzle.ghpromexporter.github.GitHubAuthentication;
 import de.skuzzle.ghpromexporter.scrape.AsynchronousScrapeService;
-import de.skuzzle.ghpromexporter.scrape.ScrapeRepositoryRequest;
+import de.skuzzle.ghpromexporter.scrape.RepositoryMeters;
+import io.prometheus.client.CollectorRegistry;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -24,10 +25,10 @@ record PromController(
         AbuseLimiter abuseLimiter,
         WebProperties properties) {
 
-    @GetMapping(path = "{user}/{repo}")
+    @GetMapping(path = "{owner}/{repositories}")
     public Mono<ResponseEntity<String>> createStats(
-            @PathVariable String user,
-            @PathVariable String repo,
+            @PathVariable String owner,
+            @PathVariable String repositories,
             ServerHttpRequest request) {
 
         final GitHubAuthentication gitHubAuthentication = authenticationProvider.authenticateRequest(request);
@@ -39,10 +40,11 @@ record PromController(
 
         final InetAddress origin = request.getRemoteAddress().getAddress();
         final MediaType contentType = MediaType.TEXT_PLAIN;// determineContentType(request);
-        final ScrapeRepositoryRequest scrapeRepositoryRequest = ScrapeRepositoryRequest.of(user, repo);
+
+        final MultipleRepositories multipleRepositories = MultipleRepositories.parse(owner, repositories);
 
         return abuseLimiter.blockAbusers(origin)
-                .flatMap(__ -> freshResponse(gitHubAuthentication, scrapeRepositoryRequest, contentType))
+                .flatMap(__ -> freshResponse(gitHubAuthentication, multipleRepositories, contentType))
                 .doOnError(e -> abuseLimiter.recordCall(e, origin))
                 .onErrorResume(e -> Mono.just(ResponseEntity.badRequest().body(e.getMessage())))
                 .switchIfEmpty(
@@ -52,11 +54,21 @@ record PromController(
     }
 
     private Mono<ResponseEntity<String>> freshResponse(GitHubAuthentication authentication,
-            ScrapeRepositoryRequest request, MediaType contentType) {
-        return scrapeService.scrapeReactive(authentication, request)
-                .map(result -> serializer.serializeRegistry(result.toRegistry(request), contentType))
+            MultipleRepositories repositories, MediaType contentType) {
+
+        return scrapeAll(authentication, repositories)
+                .map(registry -> serializer.serializeRegistry(registry, contentType))
                 .map(serializedMetrics -> ResponseEntity.ok()
                         .contentType(contentType)
                         .body(serializedMetrics));
+    }
+
+    private Mono<CollectorRegistry> scrapeAll(GitHubAuthentication authentication, MultipleRepositories repositories) {
+        final RepositoryMeters meters = RepositoryMeters.newRegistry();
+
+        return repositories.requests()
+                .flatMap(req -> scrapeService.scrapeReactive(authentication, req)
+                        .doOnNext(scrapeResult -> meters.addRepositoryScrapeResults(req, scrapeResult)))
+                .then(Mono.just(meters.registry()));
     }
 }

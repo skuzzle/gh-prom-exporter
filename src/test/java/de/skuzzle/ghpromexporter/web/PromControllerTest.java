@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import de.skuzzle.ghpromexporter.github.GitHubAuthentication;
 import de.skuzzle.test.snapshots.SnapshotAssertions;
 import de.skuzzle.test.snapshots.SnapshotDsl.Snapshot;
 import reactor.core.publisher.Mono;
@@ -56,60 +57,83 @@ public class PromControllerTest {
     @Test
     void scrape_anonymously_forbidden() throws Exception {
         final var serviceCall = getStatsFor("skuzzle", "test-repo");
+        final GitHubAuthentication gitHubAuthentication = successfulAuthenticationForRepository(
+                withName("skuzzle", "test-repo")
+                        .withStargazerCount(1337))
+                                .setAnonymous(true);
 
-        authentication.with(successfulAuthenticationForRepository(withName("skuzzle", "test-repo")
-                .withStargazerCount(1337)).setAnonymous(true), () -> {
+        authentication.with(gitHubAuthentication, () -> {
+            StepVerifier.create(serviceCall)
+                    .assertNext(
+                            response -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED))
+                    .verifyComplete();
+        });
+    }
 
-                    StepVerifier.create(serviceCall)
-                            .assertNext(
-                                    response -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED))
-                            .verifyComplete();
-                });
+    @Test
+    void scrape_multiple_repositories(Snapshot snapshot) throws Exception {
+        final var serviceCall = getStatsFor("skuzzle", "test-repo1,test-repo2");
+        final var gitHubAuthentication = successfulAuthenticationForRepository(
+                withName("skuzzle", "test-repo1")
+                        .withForkCount(5));
+
+        gitHubAuthentication.modify().withRepository(withName("skuzzle", "test-repo2").withStargazerCount(1337));
+        authentication.with(gitHubAuthentication, () -> {
+            StepVerifier.create(serviceCall)
+                    .assertNext(response -> snapshot.assertThat(response.getBody())
+                            .as(canonicalPrometheusRegistry())
+                            .matchesSnapshotText())
+                    .verifyComplete();
+        });
     }
 
     @Test
     void test_successful_initial_scrape(Snapshot snapshot) throws Exception {
         final var serviceCall = getStatsFor("skuzzle", "test-repo");
+        final GitHubAuthentication gitHubAuthentication = successfulAuthenticationForRepository(
+                withName("skuzzle", "test-repo")
+                        .withStargazerCount(1337)
+                        .withForkCount(5)
+                        .withOpenIssueCount(2)
+                        .withWatchersCount(1)
+                        .withSubscriberCount(4)
+                        .withAdditions(50)
+                        .withDeletions(-20)
+                        .withSizeInKb(127));
 
-        authentication.with(successfulAuthenticationForRepository(withName("skuzzle", "test-repo")
-                .withStargazerCount(1337)
-                .withForkCount(5)
-                .withOpenIssueCount(2)
-                .withWatchersCount(1)
-                .withSubscriberCount(4)
-                .withAdditions(50)
-                .withDeletions(-20)
-                .withSizeInKb(127)), () -> {
+        authentication.with(gitHubAuthentication, () -> {
 
-                    StepVerifier.create(serviceCall)
-                            .assertNext(response -> snapshot.assertThat(response.getBody())
-                                    .as(canonicalPrometheusRegistry())
-                                    .matchesSnapshotText())
-                            .verifyComplete();
-                });
+            StepVerifier.create(serviceCall)
+                    .assertNext(response -> snapshot.assertThat(response.getBody())
+                            .as(canonicalPrometheusRegistry())
+                            .matchesSnapshotText())
+                    .verifyComplete();
+        });
     }
 
     @Test
     void test_successful_anonymous_scrape(Snapshot snapshot) throws Exception {
         final var serviceCall = getStatsFor("skuzzle", "test-repo");
         webProperties.setAllowAnonymousScrape(true);
+        final GitHubAuthentication gitHubAuthentication = successfulAuthenticationForRepository(
+                withName("skuzzle", "test-repo")
+                        .withStargazerCount(1337)
+                        .withForkCount(5)
+                        .withOpenIssueCount(2)
+                        .withWatchersCount(1)
+                        .withSubscriberCount(4)
+                        .withAdditions(50)
+                        .withDeletions(-20)
+                        .withSizeInKb(127)).setAnonymous(true);
 
-        authentication.with(successfulAuthenticationForRepository(withName("skuzzle", "test-repo")
-                .withStargazerCount(1337)
-                .withForkCount(5)
-                .withOpenIssueCount(2)
-                .withWatchersCount(1)
-                .withSubscriberCount(4)
-                .withAdditions(50)
-                .withDeletions(-20)
-                .withSizeInKb(127)).setAnonymous(true), () -> {
+        authentication.with(gitHubAuthentication, () -> {
 
-                    StepVerifier.create(serviceCall)
-                            .assertNext(response -> snapshot.assertThat(response.getBody())
-                                    .as(canonicalPrometheusRegistry())
-                                    .matchesSnapshotText())
-                            .verifyComplete();
-                });
+            StepVerifier.create(serviceCall)
+                    .assertNext(response -> snapshot.assertThat(response.getBody())
+                            .as(canonicalPrometheusRegistry())
+                            .matchesSnapshotText())
+                    .verifyComplete();
+        });
     }
 
     @Test
