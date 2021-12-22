@@ -6,5 +6,5 @@
 * [#1](https://github.com/skuzzle/gh-prom-exporter/issues/1) Allow to scrape multiple repository with single call
 
 ```
-docker pull ghcr.io/skuzzle/gh-prom-exporter/gh-prom-exporter:0.0.5-SNAPSHOT
+docker pull ghcr.io/skuzzle/gh-prom-exporter/gh-prom-exporter:0.0.5
 ```
