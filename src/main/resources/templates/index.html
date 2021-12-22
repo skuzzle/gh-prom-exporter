@@ -49,7 +49,16 @@
   static_configs:
     - targets: ['gh.skuzzle.de']</pre>
                 </code>
-                <mark>Note:</mark> You probably don't want to put your token in plain text into the config. Prometheus also allows to read it from a mounted secret file.
+                <p>
+                    <mark>Note:</mark> You probably don't want to put your token in plain text into the config. 
+                    Prometheus also allows to read it from a mounted secret file.
+                </p>
+                <p>
+                    <mark>Note:</mark> You can scrape multiple repositories of the same owner with a single job. 
+                    Just list the repository names separated with a comma like this: 
+                    <code>metrics_path: /YOUR-GITHUB-USERNAME/YOUR-REPOSITORY1,REPOSITORY2</code>
+                </p>
+            </li>
         </ol>
         
         <h2>FAQ</h2>
@@ -171,7 +180,7 @@
 
     <footer>
         <p>by <a href="https://simon.taddiken.online">Simon Taddiken</a></p>
-        <p>Application: <em th:text="${@environment.getProperty('application.formatted-version')}"></em></p>
+        <p><a th:href="'https://github.com/skuzzle/gh-prom-exporter/releases/tag/' + ${@versions.application}"><em th:text="${@versions.application}"></em></a></p>
     </footer>
 </body>
 </html>
