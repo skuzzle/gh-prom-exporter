@@ -1,7 +1,7 @@
-# HELP github_additions_created TBD
-# HELP github_additions_total TBD
-# HELP github_deletions_created TBD
-# HELP github_deletions_total TBD
+# HELP github_additions_created Sum of additions over the last 52 weeks
+# HELP github_additions_total Sum of additions over the last 52 weeks
+# HELP github_deletions_created Negative sum of deletions over the last 52 weeks
+# HELP github_deletions_total Negative sum of deletions over the last 52 weeks
 # HELP github_forks_created The repository's fork count
 # HELP github_forks_total The repository's fork count
 # HELP github_open_issues_created The repository's open issue count
