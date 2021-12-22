@@ -1,8 +1,6 @@
 package de.skuzzle.ghpromexporter.scrape;
 
-import java.io.Serializable;
-
-public record ScrapeRepositoryRequest(String owner, String repository) implements Serializable {
+public record ScrapeRepositoryRequest(String owner, String repository) {
 
     public static ScrapeRepositoryRequest of(String owner, String repository) {
         return new ScrapeRepositoryRequest(owner, repository);

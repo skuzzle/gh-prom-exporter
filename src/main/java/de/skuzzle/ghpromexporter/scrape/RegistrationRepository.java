@@ -1,7 +1,5 @@
 package de.skuzzle.ghpromexporter.scrape;
 
-import java.io.Serializable;
-
 import com.google.common.base.Supplier;
 
 import de.skuzzle.ghpromexporter.github.GitHubAuthentication;
@@ -22,8 +20,7 @@ interface RegistrationRepository {
 
     Mono<RepositoryMetrics> getExistingOrLoad(RegisteredScraper scraper, Supplier<RepositoryMetrics> loader);
 
-    record RegisteredScraper(GitHubAuthentication authentication, ScrapeRepositoryRequest repository)
-            implements Serializable {
+    record RegisteredScraper(GitHubAuthentication authentication, ScrapeRepositoryRequest repository) {
 
         RepositoryMetrics scrapeWith(ScrapeService scrapeRepositoryService) {
             return scrapeRepositoryService.scrape(authentication, repository);
