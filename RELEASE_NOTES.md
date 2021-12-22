@@ -5,5 +5,5 @@
 * Support open metrics format (`Accept: application/openmetrics-text`)
 
 ```
-docker pull ghcr.io/skuzzle/gh-prom-exporter/gh-prom-exporter:0.0.7-SNAPSHOT
+docker pull ghcr.io/skuzzle/gh-prom-exporter/gh-prom-exporter:0.0.7
 ```
