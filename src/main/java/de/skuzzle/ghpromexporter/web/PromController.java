@@ -55,7 +55,7 @@ record PromController(
                 .switchIfEmpty(
                         Mono.fromSupplier(() -> ResponseEntity
                                 .status(HttpStatus.FORBIDDEN)
-                                .body("Your IP '%s' has exceeded the abuse limit\n".formatted(origin))));
+                                .body("Your IP '%s' has exceeded the abuse limit".formatted(origin))));
     }
 
     private Mono<ResponseEntity<String>> freshResponse(GitHubAuthentication authentication,
