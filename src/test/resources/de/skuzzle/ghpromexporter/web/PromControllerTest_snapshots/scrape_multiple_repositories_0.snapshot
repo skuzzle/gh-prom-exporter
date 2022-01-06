@@ -1,3 +1,8 @@
+snapshot-name: scrape_multiple_repositories_0
+snapshot-number: 0
+test-class: de.skuzzle.ghpromexporter.web.PromControllerTest
+test-method: scrape_multiple_repositories
+
 INFO: This registry is sorted and cleaned up from some random values to ensure deterministic testing behavior
 
 # HELP github_additions_created Sum of additions over the last 52 weeks
