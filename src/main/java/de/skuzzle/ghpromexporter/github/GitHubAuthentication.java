@@ -12,6 +12,11 @@ import de.skuzzle.ghpromexporter.github.InternalGitHubAuthentication.AnonymousAu
 import de.skuzzle.ghpromexporter.github.InternalGitHubAuthentication.BasicAuthentication;
 import de.skuzzle.ghpromexporter.github.InternalGitHubAuthentication.TokenAuthentication;
 
+/**
+ * Instances of this interface define how to connect and authenticate to GitHub.
+ *
+ * @author Simon Taddiken
+ */
 public interface GitHubAuthentication {
 
     public static GitHubAuthentication fromRequest(ServerHttpRequest request) {
