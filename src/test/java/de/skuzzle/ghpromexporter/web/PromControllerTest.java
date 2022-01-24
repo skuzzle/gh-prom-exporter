@@ -20,7 +20,7 @@ import de.skuzzle.test.snapshots.SnapshotAssertions;
 import de.skuzzle.test.snapshots.SnapshotDsl.Snapshot;
 import reactor.test.StepVerifier;
 
-@SnapshotAssertions
+@SnapshotAssertions(forceUpdateSnapshots = false)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, properties = "web.abuseCache.expireAfterWrite=1s")
 public class PromControllerTest {
 

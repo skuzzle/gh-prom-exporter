@@ -1,7 +1,6 @@
 package de.skuzzle.ghpromexporter.github;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -13,7 +12,7 @@ import de.skuzzle.ghpromexporter.github.InternalGitHubAuthentication.AnonymousAu
 import de.skuzzle.ghpromexporter.github.InternalGitHubAuthentication.BasicAuthentication;
 import de.skuzzle.ghpromexporter.github.InternalGitHubAuthentication.TokenAuthentication;
 
-public interface GitHubAuthentication extends Serializable {
+public interface GitHubAuthentication {
 
     public static GitHubAuthentication fromRequest(ServerHttpRequest request) {
         final String authorization = request.getHeaders().getFirst("Authorization");

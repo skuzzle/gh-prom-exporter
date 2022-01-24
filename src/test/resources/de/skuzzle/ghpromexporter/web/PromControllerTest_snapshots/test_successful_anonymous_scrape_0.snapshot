@@ -1,3 +1,10 @@
+snapshot-name: test_successful_anonymous_scrape_0
+snapshot-number: 0
+test-class: de.skuzzle.ghpromexporter.web.PromControllerTest
+test-method: test_successful_anonymous_scrape
+
+INFO: This registry is sorted and cleaned up from some random values to ensure deterministic testing behavior
+
 # HELP github_additions_created Sum of additions over the last 52 weeks
 # HELP github_additions_total Sum of additions over the last 52 weeks
 # HELP github_deletions_created Negative sum of deletions over the last 52 weeks

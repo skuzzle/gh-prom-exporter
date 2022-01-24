@@ -2,12 +2,17 @@ package de.skuzzle.ghpromexporter.web;
 
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import de.skuzzle.test.snapshots.SnapshotException;
 import de.skuzzle.test.snapshots.SnapshotSerializer;
 
-public class CanonicalPrometheusRegistrySerializer implements SnapshotSerializer {
+/**
+ * Creates a canoncial view from a textual prometheus registry representation.
+ */
+class CanonicalPrometheusRegistrySerializer implements SnapshotSerializer {
 
+    private final static String HEADER = "INFO: This registry is sorted and cleaned up from some random values to ensure deterministic testing behavior\n";
     private final static Pattern CREATED_GAUGE = Pattern.compile("^.+_created\\{.*");
     private final static Pattern SCRAPE_DURATION = Pattern.compile("github_scrape_duration_sum\\{.*");
 
@@ -25,10 +30,10 @@ public class CanonicalPrometheusRegistrySerializer implements SnapshotSerializer
     }
 
     private String reorderAndFilter(String s) {
-        return s.lines()
+        return Stream.concat(Stream.of(HEADER), s.lines()
                 .filter(this::filterCreatedGauge)
                 .filter(this::filterScrapeDuation)
-                .sorted()
+                .sorted())
                 .collect(Collectors.joining("\n"));
     }
 

@@ -1,3 +1,10 @@
+snapshot-name: test_successful_scrape_open_metrics_0
+snapshot-number: 0
+test-class: de.skuzzle.ghpromexporter.web.PromControllerTest
+test-method: test_successful_scrape_open_metrics
+
+INFO: This registry is sorted and cleaned up from some random values to ensure deterministic testing behavior
+
 # EOF
 # HELP github_additions Sum of additions over the last 52 weeks
 # HELP github_deletions Negative sum of deletions over the last 52 weeks

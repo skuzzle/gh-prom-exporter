@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 
 import de.skuzzle.test.snapshots.SnapshotException;
 import de.skuzzle.test.snapshots.StructuralAssertions;
-import de.skuzzle.test.snapshots.data.text.TextDiffStructuralAssertions;
+import de.skuzzle.test.snapshots.data.text.TextSnapshot;
 
 public class HeuristicPrometheusFormat implements StructuralAssertions {
 
@@ -25,7 +25,7 @@ public class HeuristicPrometheusFormat implements StructuralAssertions {
         final String snapshotSorted = reorderAndFilter(storedSnapshot);
         final String actualSorted = reorderAndFilter(serializedActual);
 
-        new TextDiffStructuralAssertions().assertEquals(snapshotSorted, actualSorted);
+        TextSnapshot.text.structuralAssertions().assertEquals(snapshotSorted, actualSorted);
     }
 
     private String reorderAndFilter(String s) {
