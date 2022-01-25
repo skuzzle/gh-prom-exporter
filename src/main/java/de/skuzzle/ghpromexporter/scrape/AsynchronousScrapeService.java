@@ -34,12 +34,14 @@ public class AsynchronousScrapeService {
             ScrapeRepositoryRequest request) {
         final RegisteredScraper scrapeTarget = new RegisteredScraper(authentication, request);
 
-        return registrationRepository.getExistingOrLoad(scrapeTarget, scraper -> {
-            final RepositoryMetrics repositoryMetrics = scraper.scrapeWith(scrapeRepositoryService);
-            log.info("Cache miss for {}. Scraped fresh metrics now in {}ms", scraper,
-                    repositoryMetrics.scrapeDuration());
-            return repositoryMetrics;
-        });
+        return registrationRepository
+                .getExistingOrLoad(scrapeTarget, scraper -> {
+                    final RepositoryMetrics repositoryMetrics = scraper.scrapeWith(scrapeRepositoryService);
+                    log.info("Cache miss for {}. Scraped fresh metrics now in {}ms", scraper,
+                            repositoryMetrics.scrapeDuration());
+                    return repositoryMetrics;
+                })
+                .doOnError(error -> AppMetrics.scrapeFailures().increment());
     }
 
     @Scheduled(
@@ -73,6 +75,7 @@ public class AsynchronousScrapeService {
                     repositoryMetrics.scrapeDuration());
         } catch (final Exception e) {
             registrationRepository.deleteRegistration(scrapeTarget);
+            AppMetrics.scrapeFailures().increment();
             log.error("Scrape using '{}' threw exception. Will be removed from cache of active scrapers", scrapeTarget,
                     e);
         } finally {
