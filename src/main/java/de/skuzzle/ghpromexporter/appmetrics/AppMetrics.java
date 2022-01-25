@@ -17,6 +17,8 @@ public final class AppMetrics {
     private static final DistributionSummary registeredScrapers = Metrics.summary(NAMESPACE + "registered_scrapers");
     private static final Counter scrapeFailures = Metrics.counter(NAMESPACE + "scrape_failures");
     private static final Counter abuses = Metrics.counter(NAMESPACE + "abuses");
+    private static final Counter apiCalls = Metrics.counter(NAMESPACE + "api_calls");
+    private static final Counter rateLimitHits = Metrics.counter(NAMESPACE + "rate_limit_hits");
 
     public static Timer scrapeDuration() {
         return scrapeDuration;
@@ -32,5 +34,13 @@ public final class AppMetrics {
 
     public static Counter abuses() {
         return abuses;
+    }
+
+    public static Counter apiCalls() {
+        return apiCalls;
+    }
+
+    public static Counter rateLimitHits() {
+        return rateLimitHits;
     }
 }

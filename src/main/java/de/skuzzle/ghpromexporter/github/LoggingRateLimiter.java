@@ -7,6 +7,8 @@ import org.kohsuke.github.RateLimitHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.skuzzle.ghpromexporter.appmetrics.AppMetrics;
+
 final class LoggingRateLimiter extends RateLimitHandler {
 
     private static final Logger log = LoggerFactory.getLogger(LoggingRateLimiter.class);
@@ -20,6 +22,7 @@ final class LoggingRateLimiter extends RateLimitHandler {
     @Override
     public void onError(IOException e, HttpURLConnection uc) throws IOException {
         log.warn("API rate limit has been hit for {}", origin);
+        AppMetrics.rateLimitHits().increment();
         RateLimitHandler.WAIT.onError(e, uc);
     }
 

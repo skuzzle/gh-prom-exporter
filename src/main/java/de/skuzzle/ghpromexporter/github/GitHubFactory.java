@@ -1,15 +1,20 @@
 package de.skuzzle.ghpromexporter.github;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.concurrent.ExecutionException;
 
 import org.kohsuke.github.GitHub;
 import org.kohsuke.github.GitHubBuilder;
+import org.kohsuke.github.HttpConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 import com.google.common.cache.Cache;
+
+import de.skuzzle.ghpromexporter.appmetrics.AppMetrics;
 
 final class GitHubFactory {
 
@@ -33,8 +38,18 @@ final class GitHubFactory {
     private static GitHub buildGitHubFor(InternalGitHubAuthentication origin) throws IOException {
         log.info("Creating new GitHub connection for {}", origin);
         return origin.consumeBuilder(new GitHubBuilder())
+                .withConnector(new RequestCountingHttpConnector())
                 .withRateLimitHandler(new LoggingRateLimiter(origin))
                 .build();
+    }
+
+    private static class RequestCountingHttpConnector implements HttpConnector {
+
+        @Override
+        public HttpURLConnection connect(URL url) throws IOException {
+            AppMetrics.apiCalls().increment();
+            return DEFAULT.connect(url);
+        }
 
     }
 

@@ -4,6 +4,7 @@
 
 * Upgrade to Spring-Boot `2.6.3` (coming from `2.6.2`)
 * Refactoring and improve internal documentation
+* Add more internal metrics: `registered_scrapers`, `scrape_failures`, `abuses`, `api_calls` and `rate_limit_hits`
 
 
 ```
