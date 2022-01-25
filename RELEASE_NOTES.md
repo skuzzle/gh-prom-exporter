@@ -3,6 +3,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/skuzzle/gh-prom-exporter/badge.svg?branch=master)](https://coveralls.io/github/skuzzle/gh-prom-exporter?branch=master) [![Twitter Follow](https://img.shields.io/twitter/follow/skuzzleOSS.svg?style=social)](https://twitter.com/skuzzleOSS)
 
 * Upgrade to Spring-Boot `2.6.3` (coming from `2.6.2`)
+* Refactoring and improve internal documentation
 
 
 ```

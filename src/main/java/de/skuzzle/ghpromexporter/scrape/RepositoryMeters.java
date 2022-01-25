@@ -4,6 +4,12 @@ import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.Counter;
 import io.prometheus.client.Summary;
 
+/**
+ * Holds all the prometheus meters that will be updated when a repository is freshly
+ * scraped.
+ *
+ * @author Simon Taddiken
+ */
 public final class RepositoryMeters {
 
     private static final String LABEL_REPOSITORY = "repository";

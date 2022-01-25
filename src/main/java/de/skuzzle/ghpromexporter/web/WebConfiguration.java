@@ -12,4 +12,9 @@ public class WebConfiguration {
     AbuseLimiter abuserLimiter(WebProperties properties) {
         return new AbuseLimiter(properties.abuseCache().build(), properties.abuseLimit());
     }
+
+    @Bean
+    AuthenticationProvider authenticationProvider() {
+        return AuthenticationProvider::parseRequest;
+    }
 }

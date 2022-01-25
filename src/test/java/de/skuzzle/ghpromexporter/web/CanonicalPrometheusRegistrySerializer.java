@@ -8,7 +8,7 @@ import de.skuzzle.test.snapshots.SnapshotException;
 import de.skuzzle.test.snapshots.SnapshotSerializer;
 
 /**
- * Creates a canoncial view from a textual prometheus registry representation.
+ * Creates a canonical view from a textual prometheus registry representation.
  */
 class CanonicalPrometheusRegistrySerializer implements SnapshotSerializer {
 

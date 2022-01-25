@@ -10,6 +10,13 @@ import de.skuzzle.ghpromexporter.github.ScrapableRepository;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
+/**
+ * Internal service for actually scraping a repository (given as
+ * {@link ScrapeRepositoryRequest}), accessing it using a given
+ * {@link GitHubAuthentication}.
+ *
+ * @author Simon Taddiken
+ */
 @Component
 class ScrapeService {
 
