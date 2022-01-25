@@ -37,6 +37,7 @@ class ScrapeService {
             final RepositoryMetrics repositoryMetrics = new RepositoryMetrics(
                     scrapableRepository.totalAdditions(),
                     scrapableRepository.totalDeletions(),
+                    scrapableRepository.commitsToMainBranch(),
                     scrapableRepository.stargazersCount(),
                     scrapableRepository.forkCount(),
                     scrapableRepository.openIssueCount(),

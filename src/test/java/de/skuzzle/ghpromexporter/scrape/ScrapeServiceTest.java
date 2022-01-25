@@ -23,6 +23,7 @@ public class ScrapeServiceTest {
                         .withSubscriberCount(4)
                         .withAdditions(50)
                         .withDeletions(-20)
+                        .withCommitsToMainBranchCount(15)
                         .withSizeInKb(127));
 
         final RepositoryMetrics metrics = scrapeService.scrape(authentication,
@@ -35,6 +36,7 @@ public class ScrapeServiceTest {
         assertThat(metrics.subscriberCount()).isEqualTo(4);
         assertThat(metrics.totalAdditions()).isEqualTo(50);
         assertThat(metrics.totalDeletions()).isEqualTo(20);
+        assertThat(metrics.commitsToMainBranch()).isEqualTo(15);
         assertThat(metrics.sizeInKb()).isEqualTo(127);
     }
 }

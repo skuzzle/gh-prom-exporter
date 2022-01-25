@@ -8,6 +8,7 @@ package de.skuzzle.ghpromexporter.scrape;
 public record RepositoryMetrics(
         long totalAdditions,
         long totalDeletions,
+        int commitsToMainBranch,
         int stargazersCount,
         int forkCount,
         int openIssueCount,

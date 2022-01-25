@@ -9,6 +9,8 @@ import java.util.List;
 import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.GHRepositoryStatistics;
 import org.kohsuke.github.GHRepositoryStatistics.CodeFrequency;
+import org.kohsuke.github.GHRepositoryStatistics.ContributorStats;
+import org.kohsuke.github.PagedIterables;
 import org.mockito.Mockito;
 
 public class MockRepositoryBuilder {
@@ -16,6 +18,7 @@ public class MockRepositoryBuilder {
     private final GHRepository repository = Mockito.mock(GHRepository.class);
     private final GHRepositoryStatistics statistics = Mockito.mock(GHRepositoryStatistics.class);
     private final List<CodeFrequency> codeFrequency = new ArrayList<>();
+    private final ContributorStats contributorStats = Mockito.mock(ContributorStats.class);
 
     private final String owner;
     private final String name;
@@ -27,6 +30,7 @@ public class MockRepositoryBuilder {
             when(repository.getOwnerName()).thenReturn(owner);
             when(repository.getName()).thenReturn(name);
 
+            when(statistics.getContributorStats()).thenReturn(PagedIterables.of(contributorStats));
             when(repository.getStatistics()).thenReturn(statistics);
             when(statistics.getCodeFrequency()).thenReturn(codeFrequency);
         } catch (final Exception ignore) {
@@ -40,6 +44,11 @@ public class MockRepositoryBuilder {
 
     public static MockRepositoryBuilder withName(String owner, String name) {
         return new MockRepositoryBuilder(owner, name);
+    }
+
+    public MockRepositoryBuilder withCommitsToMainBranchCount(int count) {
+        when(contributorStats.getTotal()).thenReturn(count);
+        return this;
     }
 
     public MockRepositoryBuilder withStargazerCount(int count) {
