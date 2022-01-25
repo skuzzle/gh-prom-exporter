@@ -16,6 +16,7 @@ public final class AppMetrics {
     private static final Timer scrapeDuration = Metrics.timer(NAMESPACE + "repository_scrape_duration");
     private static final DistributionSummary registeredScrapers = Metrics.summary(NAMESPACE + "registered_scrapers");
     private static final Counter scrapeFailures = Metrics.counter(NAMESPACE + "scrape_failures");
+    private static final Counter abuses = Metrics.counter(NAMESPACE + "abuses");
 
     public static Timer scrapeDuration() {
         return scrapeDuration;
@@ -27,5 +28,9 @@ public final class AppMetrics {
 
     public static Counter scrapeFailures() {
         return scrapeFailures;
+    }
+
+    public static Counter abuses() {
+        return abuses;
     }
 }
