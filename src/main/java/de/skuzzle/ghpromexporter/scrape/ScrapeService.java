@@ -17,16 +17,11 @@ class ScrapeService {
 
     public Mono<RepositoryMetrics> scrapeReactive(GitHubAuthentication authentication,
             ScrapeRepositoryRequest repository) {
-        return Mono.fromSupplier(() -> scrapeFresh(authentication, repository))
+        return Mono.fromSupplier(() -> scrape(authentication, repository))
                 .subscribeOn(Schedulers.boundedElastic());
     }
 
-    public RepositoryMetrics scrape(GitHubAuthentication authentication,
-            ScrapeRepositoryRequest repository) {
-        return scrapeFresh(authentication, repository);
-    }
-
-    private RepositoryMetrics scrapeFresh(GitHubAuthentication authentication, ScrapeRepositoryRequest repository) {
+    public RepositoryMetrics scrape(GitHubAuthentication authentication, ScrapeRepositoryRequest repository) {
         final long start = System.currentTimeMillis();
         return AppMetrics.scrapeDuration().record(() -> {
             final var repositoryFullName = repository.repositoryFullName();
