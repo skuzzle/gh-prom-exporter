@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 
-import de.skuzzle.ghpromexporter.github.AuthenticationProvider;
 import de.skuzzle.ghpromexporter.github.GitHubAuthentication;
 
 @Primary

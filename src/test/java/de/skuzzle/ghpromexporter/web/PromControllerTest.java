@@ -83,6 +83,7 @@ public class PromControllerTest {
                         .withSubscriberCount(4)
                         .withAdditions(50)
                         .withDeletions(-20)
+                        .withCommitsToMainBranchCount(15)
                         .withSizeInKb(127));
 
         authentication.with(gitHubAuthentication, () -> {
@@ -113,6 +114,7 @@ public class PromControllerTest {
                         .withSubscriberCount(4)
                         .withAdditions(50)
                         .withDeletions(-20)
+                        .withCommitsToMainBranchCount(15)
                         .withSizeInKb(127));
 
         authentication.with(gitHubAuthentication, () -> {
@@ -142,6 +144,7 @@ public class PromControllerTest {
                         .withSubscriberCount(4)
                         .withAdditions(50)
                         .withDeletions(-20)
+                        .withCommitsToMainBranchCount(15)
                         .withSizeInKb(127)).setAnonymous(true);
 
         authentication.with(gitHubAuthentication, () -> {

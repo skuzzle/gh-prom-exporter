@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import de.skuzzle.ghpromexporter.github.AuthenticationProvider;
 import de.skuzzle.ghpromexporter.github.GitHubAuthentication;
 import de.skuzzle.ghpromexporter.scrape.AsynchronousScrapeService;
 import de.skuzzle.ghpromexporter.scrape.RepositoryMeters;

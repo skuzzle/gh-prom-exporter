@@ -4,6 +4,12 @@ import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.Counter;
 import io.prometheus.client.Summary;
 
+/**
+ * Holds all the prometheus meters that will be updated when a repository is freshly
+ * scraped.
+ *
+ * @author Simon Taddiken
+ */
 public final class RepositoryMeters {
 
     private static final String LABEL_REPOSITORY = "repository";
@@ -13,6 +19,7 @@ public final class RepositoryMeters {
     private final CollectorRegistry registry;
     private final Counter additions;
     private final Counter deletions;
+    private final Counter commitsToMainBranch;
     private final Counter stargazers;
     private final Counter forks;
     private final Counter open_issues;
@@ -30,6 +37,8 @@ public final class RepositoryMeters {
         this.additions = Counter.build("additions", "Sum of additions over the last 52 weeks")
                 .namespace(NAMESPACE).labelNames(LABEL_OWNER, LABEL_REPOSITORY).register(registry);
         this.deletions = Counter.build("deletions", "Negative sum of deletions over the last 52 weeks")
+                .namespace(NAMESPACE).labelNames(LABEL_OWNER, LABEL_REPOSITORY).register(registry);
+        this.commitsToMainBranch = Counter.build("commits_to_main_branch", "Number of commits to the main branch")
                 .namespace(NAMESPACE).labelNames(LABEL_OWNER, LABEL_REPOSITORY).register(registry);
         this.stargazers = Counter.build("stargazers", "The repository's stargazer count")
                 .namespace(NAMESPACE).labelNames(LABEL_OWNER, LABEL_REPOSITORY).register(registry);
@@ -50,6 +59,7 @@ public final class RepositoryMeters {
     public RepositoryMeters addRepositoryScrapeResults(ScrapeRepositoryRequest repository, RepositoryMetrics metrics) {
         additions.labels(repository.owner(), repository.name()).inc(metrics.totalAdditions());
         deletions.labels(repository.owner(), repository.name()).inc(metrics.totalDeletions());
+        commitsToMainBranch.labels(repository.owner(), repository.name()).inc(metrics.commitsToMainBranch());
         stargazers.labels(repository.owner(), repository.name()).inc(metrics.stargazersCount());
         forks.labels(repository.owner(), repository.name()).inc(metrics.forkCount());
         open_issues.labels(repository.owner(), repository.name()).inc(metrics.openIssueCount());

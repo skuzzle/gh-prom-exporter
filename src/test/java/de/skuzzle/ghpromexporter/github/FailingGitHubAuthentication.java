@@ -6,8 +6,6 @@ import org.kohsuke.github.GitHub;
 
 public record FailingGitHubAuthentication(boolean anonymous) implements GitHubAuthentication {
 
-    private static final long serialVersionUID = 1L;
-
     public static GitHubAuthentication failingAuthentication(boolean anonymous) {
         return new FailingGitHubAuthentication(anonymous);
     }

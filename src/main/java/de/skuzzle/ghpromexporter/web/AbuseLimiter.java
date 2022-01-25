@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.cache.Cache;
 
+import de.skuzzle.ghpromexporter.appmetrics.AppMetrics;
 import reactor.core.publisher.Mono;
 
 class AbuseLimiter {
@@ -30,6 +31,7 @@ class AbuseLimiter {
 
     private boolean abuseLimitExceeded(InetAddress origin, int actualAbuses) {
         if (actualAbuses >= abuseLimit) {
+            AppMetrics.abuses().increment();
             log.warn("Abuse limit exceeded for IP address {}. Countet violations: {}", origin, actualAbuses);
             return false;
         }

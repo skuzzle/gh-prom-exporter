@@ -7,6 +7,7 @@ INFO: This registry is sorted and cleaned up from some random values to ensure d
 
 # EOF
 # HELP github_additions Sum of additions over the last 52 weeks
+# HELP github_commits_to_main_branch Number of commits to the main branch
 # HELP github_deletions Negative sum of deletions over the last 52 weeks
 # HELP github_forks The repository's fork count
 # HELP github_open_issues The repository's open issue count
@@ -16,6 +17,7 @@ INFO: This registry is sorted and cleaned up from some random values to ensure d
 # HELP github_subscribers The repository's subscriber count
 # HELP github_watchers The repository's watcher count
 # TYPE github_additions counter
+# TYPE github_commits_to_main_branch counter
 # TYPE github_deletions counter
 # TYPE github_forks counter
 # TYPE github_open_issues counter
@@ -25,6 +27,7 @@ INFO: This registry is sorted and cleaned up from some random values to ensure d
 # TYPE github_subscribers counter
 # TYPE github_watchers counter
 github_additions_total{owner="skuzzle",repository="test-repo"} 50.0
+github_commits_to_main_branch_total{owner="skuzzle",repository="test-repo"} 15.0
 github_deletions_total{owner="skuzzle",repository="test-repo"} 20.0
 github_forks_total{owner="skuzzle",repository="test-repo"} 5.0
 github_open_issues_total{owner="skuzzle",repository="test-repo"} 2.0

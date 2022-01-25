@@ -10,6 +10,13 @@ import de.skuzzle.ghpromexporter.github.ScrapableRepository;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
+/**
+ * Internal service for actually scraping a repository (given as
+ * {@link ScrapeRepositoryRequest}), accessing it using a given
+ * {@link GitHubAuthentication}.
+ *
+ * @author Simon Taddiken
+ */
 @Component
 class ScrapeService {
 
@@ -17,16 +24,11 @@ class ScrapeService {
 
     public Mono<RepositoryMetrics> scrapeReactive(GitHubAuthentication authentication,
             ScrapeRepositoryRequest repository) {
-        return Mono.fromSupplier(() -> scrapeFresh(authentication, repository))
+        return Mono.fromSupplier(() -> scrape(authentication, repository))
                 .subscribeOn(Schedulers.boundedElastic());
     }
 
-    public RepositoryMetrics scrape(GitHubAuthentication authentication,
-            ScrapeRepositoryRequest repository) {
-        return scrapeFresh(authentication, repository);
-    }
-
-    private RepositoryMetrics scrapeFresh(GitHubAuthentication authentication, ScrapeRepositoryRequest repository) {
+    public RepositoryMetrics scrape(GitHubAuthentication authentication, ScrapeRepositoryRequest repository) {
         final long start = System.currentTimeMillis();
         return AppMetrics.scrapeDuration().record(() -> {
             final var repositoryFullName = repository.repositoryFullName();
@@ -35,6 +37,7 @@ class ScrapeService {
             final RepositoryMetrics repositoryMetrics = new RepositoryMetrics(
                     scrapableRepository.totalAdditions(),
                     scrapableRepository.totalDeletions(),
+                    scrapableRepository.commitsToMainBranch(),
                     scrapableRepository.stargazersCount(),
                     scrapableRepository.forkCount(),
                     scrapableRepository.openIssueCount(),
