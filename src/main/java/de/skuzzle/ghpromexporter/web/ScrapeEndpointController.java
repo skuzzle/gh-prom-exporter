@@ -48,7 +48,7 @@ record ScrapeEndpointController(
         log.info("Request from '{}' to scrape '{}'", gitHubAuthentication, multipleRepositories);
 
         return abuseLimiter.blockAbusers(origin)
-                .flatMap(__ -> freshResponse(gitHubAuthentication, multipleRepositories, contentType))
+                .flatMap(__ -> scrapeRepositoriesAndSerialize(gitHubAuthentication, multipleRepositories, contentType))
                 .doOnError(exception -> abuseLimiter.recordFailedCall(exception, origin))
                 .onErrorResume(exception -> Mono.just(ResponseEntity.badRequest().body(exception.getMessage())))
                 .switchIfEmpty(
@@ -57,17 +57,18 @@ record ScrapeEndpointController(
                                 .body("Your IP '%s' has exceeded the abuse limit".formatted(origin))));
     }
 
-    private Mono<ResponseEntity<String>> freshResponse(GitHubAuthentication authentication,
+    private Mono<ResponseEntity<String>> scrapeRepositoriesAndSerialize(GitHubAuthentication authentication,
             MultipleRepositories repositories, MediaType contentType) {
 
-        return scrapeAll(authentication, repositories)
+        return scrapeRepositories(authentication, repositories)
                 .map(registry -> serializer.serializeRegistry(registry, contentType))
                 .map(serializedMetrics -> ResponseEntity.ok()
                         .contentType(contentType)
                         .body(serializedMetrics));
     }
 
-    private Mono<CollectorRegistry> scrapeAll(GitHubAuthentication authentication, MultipleRepositories repositories) {
+    private Mono<CollectorRegistry> scrapeRepositories(GitHubAuthentication authentication,
+            MultipleRepositories repositories) {
         final PrometheusRepositoryMetricAggration meters = PrometheusRepositoryMetricAggration.newRegistry();
 
         return repositories.requests()
