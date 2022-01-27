@@ -23,6 +23,13 @@ class AbuseLimiter {
         this.abuseLimit = abuseLimit;
     }
 
+    /**
+     * Returns an empty optional if the abuse limit was hit. Otherwise the Mono will
+     * contain just a arbitrary object.
+     *
+     * @param origin The origin IP to check.
+     * @return An empty Mono if the abuse limit was violated by that IP.
+     */
     Mono<Object> blockAbusers(InetAddress origin) {
         return Mono.fromSupplier(() -> _0IfNull(abusers.getIfPresent(origin)))
                 .filter(actualAbuses -> abuseLimitExceeded(origin, actualAbuses))
@@ -38,6 +45,12 @@ class AbuseLimiter {
         return true;
     }
 
+    /**
+     * Records a potential abuse case for the given origin IP.
+     *
+     * @param e The error that occurred during request processing.
+     * @param origin The origin IP.
+     */
     void recordFailedCall(Throwable e, InetAddress origin) {
         log.warn("Abuse recorded for {}: {}", origin, e.getMessage());
         abusers.put(origin, _0IfNull(abusers.getIfPresent(origin)) + 1);

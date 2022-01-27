@@ -22,7 +22,7 @@ import reactor.test.StepVerifier;
 
 @SnapshotAssertions(forceUpdateSnapshots = false)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, properties = "web.abuseCache.expireAfterWrite=1s")
-public class PromControllerTest {
+public class ScrapeEndpointControllerTest {
 
     @Autowired
     private MockableAuthenticationProvider authentication;

@@ -14,22 +14,22 @@ import org.springframework.web.bind.annotation.RestController;
 
 import de.skuzzle.ghpromexporter.github.GitHubAuthentication;
 import de.skuzzle.ghpromexporter.scrape.AsynchronousScrapeService;
-import de.skuzzle.ghpromexporter.scrape.RepositoryMeters;
+import de.skuzzle.ghpromexporter.scrape.PrometheusRepositoryMetricAggration;
 import io.prometheus.client.CollectorRegistry;
 import reactor.core.publisher.Mono;
 
 @RestController
-record PromController(
+record ScrapeEndpointController(
         AuthenticationProvider authenticationProvider,
         AsynchronousScrapeService scrapeService,
         RegistrySerializer serializer,
         AbuseLimiter abuseLimiter,
         WebProperties properties) {
 
-    private static final Logger log = LoggerFactory.getLogger(PromController.class);
+    private static final Logger log = LoggerFactory.getLogger(ScrapeEndpointController.class);
 
     @GetMapping(path = "{owner}/{repositories}")
-    public Mono<ResponseEntity<String>> createStats(
+    public Mono<ResponseEntity<String>> scrapeRepositories(
             @PathVariable String owner,
             @PathVariable String repositories,
             ServerHttpRequest request) {
@@ -68,7 +68,7 @@ record PromController(
     }
 
     private Mono<CollectorRegistry> scrapeAll(GitHubAuthentication authentication, MultipleRepositories repositories) {
-        final RepositoryMeters meters = RepositoryMeters.newRegistry();
+        final PrometheusRepositoryMetricAggration meters = PrometheusRepositoryMetricAggration.newRegistry();
 
         return repositories.requests()
                 .flatMap(req -> scrapeService.scrapeReactive(authentication, req)
