@@ -71,7 +71,7 @@ record ScrapeEndpointController(
             MultipleScrapeTargets targets) {
         final PrometheusRepositoryMetricAggration meters = PrometheusRepositoryMetricAggration.newRegistry();
 
-        return targets.requests()
+        return targets.targets()
                 .flatMap(req -> scrapeService.scrapeReactive(authentication, req)
                         .doOnNext(scrapeResult -> meters.addRepositoryScrapeResults(req, scrapeResult)))
                 .then(Mono.just(meters.registry()));

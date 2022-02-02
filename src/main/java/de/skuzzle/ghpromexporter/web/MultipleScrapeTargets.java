@@ -21,7 +21,7 @@ final class MultipleScrapeTargets {
         return new MultipleScrapeTargets(owner, Arrays.asList(repositories));
     }
 
-    Flux<ScrapeTarget> requests() {
+    Flux<ScrapeTarget> targets() {
         return Flux.fromStream(repositories.stream()
                 .map(repository -> ScrapeTarget.of(owner, repository)));
     }
