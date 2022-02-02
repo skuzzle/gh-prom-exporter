@@ -12,9 +12,9 @@ import reactor.core.scheduler.Schedulers;
 
 class MemoryRegistrationRepository implements RegistrationRepository {
 
-    private final Cache<RegisteredScraper, RepositoryMetrics> registeredScrapers;
+    private final Cache<RegisteredScraper, ScrapeResult> registeredScrapers;
 
-    public MemoryRegistrationRepository(Cache<RegisteredScraper, RepositoryMetrics> registeredScrapers) {
+    public MemoryRegistrationRepository(Cache<RegisteredScraper, ScrapeResult> registeredScrapers) {
         this.registeredScrapers = registeredScrapers;
     }
 
@@ -36,7 +36,7 @@ class MemoryRegistrationRepository implements RegistrationRepository {
     }
 
     @Override
-    public void updateRegistration(RegisteredScraper scraper, RepositoryMetrics freshResult) {
+    public void updateRegistration(RegisteredScraper scraper, ScrapeResult freshResult) {
         registeredScrapers.put(scraper, freshResult);
     }
 
@@ -51,8 +51,8 @@ class MemoryRegistrationRepository implements RegistrationRepository {
     }
 
     @Override
-    public Mono<RepositoryMetrics> getExistingOrLoad(RegisteredScraper scraper,
-            Function<RegisteredScraper, RepositoryMetrics> loader) {
+    public Mono<ScrapeResult> getExistingOrLoad(RegisteredScraper scraper,
+            Function<RegisteredScraper, ScrapeResult> loader) {
         return Mono.fromSupplier(() -> {
             try {
                 return registeredScrapers.get(scraper, () -> loader.apply(scraper));

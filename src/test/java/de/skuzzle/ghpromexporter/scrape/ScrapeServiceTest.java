@@ -26,7 +26,7 @@ public class ScrapeServiceTest {
                         .withCommitsToMainBranchCount(15)
                         .withSizeInKb(127));
 
-        final RepositoryMetrics metrics = scrapeService.scrape(authentication,
+        final ScrapeResult metrics = scrapeService.scrape(authentication,
                 new ScrapeRepositoryRequest("skuzzle", "test"));
 
         assertThat(metrics.stargazersCount()).isEqualTo(1337);

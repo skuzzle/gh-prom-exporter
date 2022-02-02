@@ -30,13 +30,13 @@ public class AsynchronousScrapeService {
         this.tracer = tracer;
     }
 
-    public Mono<RepositoryMetrics> scrapeReactive(GitHubAuthentication authentication,
+    public Mono<ScrapeResult> scrapeReactive(GitHubAuthentication authentication,
             ScrapeRepositoryRequest request) {
         final RegisteredScraper scrapeTarget = new RegisteredScraper(authentication, request);
 
         return registrationRepository
                 .getExistingOrLoad(scrapeTarget, scraper -> {
-                    final RepositoryMetrics repositoryMetrics = scraper.scrapeWith(scrapeRepositoryService);
+                    final ScrapeResult repositoryMetrics = scraper.scrapeWith(scrapeRepositoryService);
                     log.info("Cache miss for {}. Scraped fresh metrics now in {}ms", scraper,
                             repositoryMetrics.scrapeDuration());
                     return repositoryMetrics;
@@ -69,7 +69,7 @@ public class AsynchronousScrapeService {
     private void scrapeAndUpdateCache(Span parentSpan, RegisteredScraper scrapeTarget) {
         final Span nextSpan = tracer.nextSpan(parentSpan).name("scrapeSingleRepo");
         try (var ws = tracer.withSpan(nextSpan.start())) {
-            final RepositoryMetrics repositoryMetrics = scrapeTarget.scrapeWith(scrapeRepositoryService);
+            final ScrapeResult repositoryMetrics = scrapeTarget.scrapeWith(scrapeRepositoryService);
             registrationRepository.updateRegistration(scrapeTarget, repositoryMetrics);
             log.info("Asynschronously updated metrics for: {} in {}ms", scrapeTarget,
                     repositoryMetrics.scrapeDuration());

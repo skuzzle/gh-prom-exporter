@@ -22,19 +22,19 @@ class ScrapeService {
 
     private static final Logger log = LoggerFactory.getLogger(ScrapeService.class);
 
-    public Mono<RepositoryMetrics> scrapeReactive(GitHubAuthentication authentication,
+    public Mono<ScrapeResult> scrapeReactive(GitHubAuthentication authentication,
             ScrapeRepositoryRequest repository) {
         return Mono.fromSupplier(() -> scrape(authentication, repository))
                 .subscribeOn(Schedulers.boundedElastic());
     }
 
-    public RepositoryMetrics scrape(GitHubAuthentication authentication, ScrapeRepositoryRequest repository) {
+    public ScrapeResult scrape(GitHubAuthentication authentication, ScrapeRepositoryRequest repository) {
         final long start = System.currentTimeMillis();
         return AppMetrics.scrapeDuration().record(() -> {
             final var repositoryFullName = repository.repositoryFullName();
             final var scrapableRepository = ScrapableRepository.load(authentication, repositoryFullName);
 
-            final RepositoryMetrics repositoryMetrics = new RepositoryMetrics(
+            final ScrapeResult repositoryMetrics = new ScrapeResult(
                     scrapableRepository.totalAdditions(),
                     scrapableRepository.totalDeletions(),
                     scrapableRepository.commitsToMainBranch(),

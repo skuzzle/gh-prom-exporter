@@ -57,7 +57,7 @@ public final class PrometheusRepositoryMetricAggration {
     }
 
     public PrometheusRepositoryMetricAggration addRepositoryScrapeResults(ScrapeRepositoryRequest repository,
-            RepositoryMetrics metrics) {
+            ScrapeResult metrics) {
         additions.labels(repository.owner(), repository.name()).inc(metrics.totalAdditions());
         deletions.labels(repository.owner(), repository.name()).inc(metrics.totalDeletions());
         commitsToMainBranch.labels(repository.owner(), repository.name()).inc(metrics.commitsToMainBranch());
