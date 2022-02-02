@@ -44,11 +44,11 @@ record ScrapeEndpointController(
         final InetAddress origin = request.getRemoteAddress().getAddress();
         final MediaType contentType = serializer.determineMediaType(request.getHeaders().getAccept());
 
-        final MultipleRepositories multipleRepositories = MultipleRepositories.parse(owner, repositories);
-        log.info("Request from '{}' to scrape '{}'", gitHubAuthentication, multipleRepositories);
+        final var targets = MultipleScrapeTargets.parse(owner, repositories);
+        log.info("Request from '{}' to scrape '{}'", gitHubAuthentication, targets);
 
         return abuseLimiter.blockAbusers(origin)
-                .flatMap(__ -> scrapeRepositoriesAndSerialize(gitHubAuthentication, multipleRepositories, contentType))
+                .flatMap(__ -> scrapeRepositoriesAndSerialize(gitHubAuthentication, targets, contentType))
                 .doOnError(exception -> abuseLimiter.recordFailedCall(exception, origin))
                 .onErrorResume(exception -> Mono.just(ResponseEntity.badRequest().body(exception.getMessage())))
                 .switchIfEmpty(
@@ -58,9 +58,9 @@ record ScrapeEndpointController(
     }
 
     private Mono<ResponseEntity<String>> scrapeRepositoriesAndSerialize(GitHubAuthentication authentication,
-            MultipleRepositories repositories, MediaType contentType) {
+            MultipleScrapeTargets targets, MediaType contentType) {
 
-        return scrapeRepositories(authentication, repositories)
+        return scrapeRepositories(authentication, targets)
                 .map(registry -> serializer.serializeRegistry(registry, contentType))
                 .map(serializedMetrics -> ResponseEntity.ok()
                         .contentType(contentType)
@@ -68,10 +68,10 @@ record ScrapeEndpointController(
     }
 
     private Mono<CollectorRegistry> scrapeRepositories(GitHubAuthentication authentication,
-            MultipleRepositories repositories) {
+            MultipleScrapeTargets targets) {
         final PrometheusRepositoryMetricAggration meters = PrometheusRepositoryMetricAggration.newRegistry();
 
-        return repositories.requests()
+        return targets.requests()
                 .flatMap(req -> scrapeService.scrapeReactive(authentication, req)
                         .doOnNext(scrapeResult -> meters.addRepositoryScrapeResults(req, scrapeResult)))
                 .then(Mono.just(meters.registry()));

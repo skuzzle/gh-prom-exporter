@@ -34,7 +34,7 @@ public class AsynchronousScrapeServiceTest {
     private void expectStargazerCount(GitHubAuthentication authentication, String owner, String repository,
             int expectedCount) {
         StepVerifier
-                .create(scrapeService.scrapeReactive(authentication, new ScrapeRepositoryRequest(owner, repository)))
+                .create(scrapeService.scrapeReactive(authentication, new ScrapeTarget(owner, repository)))
                 .assertNext(metrics -> assertThat(metrics.stargazersCount()).isEqualTo(expectedCount))
                 .verifyComplete();
     }

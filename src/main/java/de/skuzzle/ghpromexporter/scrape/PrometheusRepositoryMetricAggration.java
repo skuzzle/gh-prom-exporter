@@ -56,7 +56,8 @@ public final class PrometheusRepositoryMetricAggration {
                 .namespace(NAMESPACE).labelNames(LABEL_OWNER, LABEL_REPOSITORY).register(registry);
     }
 
-    public PrometheusRepositoryMetricAggration addRepositoryScrapeResults(ScrapeRepositoryRequest repository,
+    public PrometheusRepositoryMetricAggration addRepositoryScrapeResults(
+            ScrapeTarget repository,
             ScrapeResult metrics) {
         additions.labels(repository.owner(), repository.name()).inc(metrics.totalAdditions());
         deletions.labels(repository.owner(), repository.name()).inc(metrics.totalDeletions());

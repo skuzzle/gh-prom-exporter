@@ -27,7 +27,7 @@ public class ScrapeServiceTest {
                         .withSizeInKb(127));
 
         final ScrapeResult metrics = scrapeService.scrape(authentication,
-                new ScrapeRepositoryRequest("skuzzle", "test"));
+                new ScrapeTarget("skuzzle", "test"));
 
         assertThat(metrics.stargazersCount()).isEqualTo(1337);
         assertThat(metrics.forkCount()).isEqualTo(5);

@@ -74,10 +74,10 @@ interface RegistrationRepository {
      *
      * @author Simon Taddiken
      */
-    record RegisteredScraper(GitHubAuthentication authentication, ScrapeRepositoryRequest repository) {
+    record RegisteredScraper(GitHubAuthentication authentication, ScrapeTarget target) {
 
         ScrapeResult scrapeWith(ScrapeService scrapeRepositoryService) {
-            return scrapeRepositoryService.scrape(authentication, repository);
+            return scrapeRepositoryService.scrape(authentication, target);
         }
     }
 }
