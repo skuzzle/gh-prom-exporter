@@ -40,7 +40,7 @@
         <spring-cloud.version>2021.0.0-RC1</spring-cloud.version>
         <guava.version>31.0.1-jre</guava.version>
         <github-api.version>1.135</github-api.version>
-        <snapshottest.version>0.0.5</snapshottest.version>
+        <snapshottest.version>1.1.0</snapshottest.version>
     </properties>
 
     <repositories>

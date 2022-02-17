@@ -16,11 +16,11 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.http.HttpStatus;
 
 import de.skuzzle.ghpromexporter.github.GitHubAuthentication;
-import de.skuzzle.test.snapshots.SnapshotAssertions;
+import de.skuzzle.test.snapshots.EnableSnapshotTests;
 import de.skuzzle.test.snapshots.SnapshotDsl.Snapshot;
 import reactor.test.StepVerifier;
 
-@SnapshotAssertions(forceUpdateSnapshots = false)
+@EnableSnapshotTests
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, properties = "web.abuseCache.expireAfterWrite=1s")
 public class ScrapeEndpointControllerTest {
 
@@ -90,7 +90,7 @@ public class ScrapeEndpointControllerTest {
 
             StepVerifier.create(serviceCall)
                     .assertNext(response -> {
-                        assertThat(response.getHeaders().getContentType()).isEqualTo(RegistrySerializer.FORMAT_004);
+                        assertThat(response.getHeaders().getContentType()).isEqualTo(RegistrySerializer.TEXT_PLAIN_004);
 
                         snapshot.assertThat(response.getBody())
                                 .as(canonicalPrometheusRegistry())
