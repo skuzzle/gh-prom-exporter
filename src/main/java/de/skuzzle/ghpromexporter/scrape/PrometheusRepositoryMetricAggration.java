@@ -5,12 +5,12 @@ import io.prometheus.client.Counter;
 import io.prometheus.client.Summary;
 
 /**
- * Holds all the prometheus meters that will be updated when a repository is freshly
- * scraped.
+ * Aggregates the scrape results of multiple repositories into a single Prometheus
+ * registry.
  *
  * @author Simon Taddiken
  */
-public final class RepositoryMeters {
+public final class PrometheusRepositoryMetricAggration {
 
     private static final String LABEL_REPOSITORY = "repository";
     private static final String LABEL_OWNER = "owner";
@@ -28,12 +28,12 @@ public final class RepositoryMeters {
     private final Counter size;
     private final Summary scrapeDuration;
 
-    public static RepositoryMeters newRegistry() {
-        return new RepositoryMeters(new CollectorRegistry());
+    public static PrometheusRepositoryMetricAggration newRegistry() {
+        return new PrometheusRepositoryMetricAggration();
     }
 
-    private RepositoryMeters(CollectorRegistry registry) {
-        this.registry = registry;
+    private PrometheusRepositoryMetricAggration() {
+        this.registry = new CollectorRegistry();
         this.additions = Counter.build("additions", "Sum of additions over the last 52 weeks")
                 .namespace(NAMESPACE).labelNames(LABEL_OWNER, LABEL_REPOSITORY).register(registry);
         this.deletions = Counter.build("deletions", "Negative sum of deletions over the last 52 weeks")
@@ -56,7 +56,9 @@ public final class RepositoryMeters {
                 .namespace(NAMESPACE).labelNames(LABEL_OWNER, LABEL_REPOSITORY).register(registry);
     }
 
-    public RepositoryMeters addRepositoryScrapeResults(ScrapeRepositoryRequest repository, RepositoryMetrics metrics) {
+    public PrometheusRepositoryMetricAggration addRepositoryScrapeResults(
+            ScrapeTarget repository,
+            ScrapeResult metrics) {
         additions.labels(repository.owner(), repository.name()).inc(metrics.totalAdditions());
         deletions.labels(repository.owner(), repository.name()).inc(metrics.totalDeletions());
         commitsToMainBranch.labels(repository.owner(), repository.name()).inc(metrics.commitsToMainBranch());

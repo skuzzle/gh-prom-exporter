@@ -5,7 +5,7 @@ package de.skuzzle.ghpromexporter.scrape;
  *
  * @author Simon Taddiken
  */
-public record RepositoryMetrics(
+public record ScrapeResult(
         long totalAdditions,
         long totalDeletions,
         int commitsToMainBranch,

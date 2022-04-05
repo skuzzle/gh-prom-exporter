@@ -1,7 +1,8 @@
-snapshot-name: test_successful_initial_scrape_0
+dynamic-directory: false
+snapshot-name: test_successful_anonymous_scrape_0
 snapshot-number: 0
-test-class: de.skuzzle.ghpromexporter.web.PromControllerTest
-test-method: test_successful_initial_scrape
+test-class: de.skuzzle.ghpromexporter.web.ScrapeEndpointControllerTest
+test-method: test_successful_anonymous_scrape
 
 INFO: This registry is sorted and cleaned up from some random values to ensure deterministic testing behavior
 

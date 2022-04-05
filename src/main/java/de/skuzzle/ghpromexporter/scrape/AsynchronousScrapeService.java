@@ -30,13 +30,12 @@ public class AsynchronousScrapeService {
         this.tracer = tracer;
     }
 
-    public Mono<RepositoryMetrics> scrapeReactive(GitHubAuthentication authentication,
-            ScrapeRepositoryRequest request) {
-        final RegisteredScraper scrapeTarget = new RegisteredScraper(authentication, request);
+    public Mono<ScrapeResult> scrapeReactive(GitHubAuthentication authentication, ScrapeTarget scrapeTarget) {
+        final RegisteredScraper registeredScraper = new RegisteredScraper(authentication, scrapeTarget);
 
         return registrationRepository
-                .getExistingOrLoad(scrapeTarget, scraper -> {
-                    final RepositoryMetrics repositoryMetrics = scraper.scrapeWith(scrapeRepositoryService);
+                .getExistingOrLoad(registeredScraper, scraper -> {
+                    final ScrapeResult repositoryMetrics = scraper.scrapeWith(scrapeRepositoryService);
                     log.info("Cache miss for {}. Scraped fresh metrics now in {}ms", scraper,
                             repositoryMetrics.scrapeDuration());
                     return repositoryMetrics;
@@ -58,7 +57,7 @@ public class AsynchronousScrapeService {
         final Span newSpan = tracer.nextSpan().name("scheduledScrape");
         try (var ws = tracer.withSpan(newSpan.start())) {
             registrationRepository.registeredScrapers()
-                    .doOnNext(scrapeTarget -> scrapeAndUpdateCache(newSpan, scrapeTarget))
+                    .doOnNext(registeredScraper -> scrapeAndUpdateCache(newSpan, registeredScraper))
                     .doOnTerminate(() -> log.info("Updated cached metrics for all registered scrapers"))
                     .blockLast();
         } finally {
@@ -66,18 +65,16 @@ public class AsynchronousScrapeService {
         }
     }
 
-    private void scrapeAndUpdateCache(Span parentSpan, RegisteredScraper scrapeTarget) {
+    private void scrapeAndUpdateCache(Span parentSpan, RegisteredScraper scraper) {
         final Span nextSpan = tracer.nextSpan(parentSpan).name("scrapeSingleRepo");
         try (var ws = tracer.withSpan(nextSpan.start())) {
-            final RepositoryMetrics repositoryMetrics = scrapeTarget.scrapeWith(scrapeRepositoryService);
-            registrationRepository.updateRegistration(scrapeTarget, repositoryMetrics);
-            log.info("Asynschronously updated metrics for: {} in {}ms", scrapeTarget,
-                    repositoryMetrics.scrapeDuration());
+            final ScrapeResult scrapeResult = scraper.scrapeWith(scrapeRepositoryService);
+            registrationRepository.updateRegistration(scraper, scrapeResult);
+            log.info("Asynschronously updated metrics for: {} in {}ms", scraper, scrapeResult.scrapeDuration());
         } catch (final Exception e) {
-            registrationRepository.deleteRegistration(scrapeTarget);
+            registrationRepository.deleteRegistration(scraper);
             AppMetrics.scrapeFailures().increment();
-            log.error("Scrape using '{}' threw exception. Will be removed from cache of active scrapers", scrapeTarget,
-                    e);
+            log.error("Scrape using '{}' threw exception. Will be removed from cache of active scrapers", scraper, e);
         } finally {
             nextSpan.end();
         }

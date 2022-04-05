@@ -41,7 +41,7 @@ interface RegistrationRepository {
      * @param scraper The scraper.
      * @param freshResult The scrape result.
      */
-    void updateRegistration(RegisteredScraper scraper, RepositoryMetrics freshResult);
+    void updateRegistration(RegisteredScraper scraper, ScrapeResult freshResult);
 
     /**
      * Deletes the given single scraper from this repository.
@@ -65,8 +65,8 @@ interface RegistrationRepository {
      * @return The metrics for the given scraper. Either freshly scraped or obtained from
      *         cache.
      */
-    Mono<RepositoryMetrics> getExistingOrLoad(RegisteredScraper scraper,
-            Function<RegisteredScraper, RepositoryMetrics> loader);
+    Mono<ScrapeResult> getExistingOrLoad(RegisteredScraper scraper,
+            Function<RegisteredScraper, ScrapeResult> loader);
 
     /**
      * Combines a single scrape target (GitHub repository) along with authentication
@@ -74,10 +74,10 @@ interface RegistrationRepository {
      *
      * @author Simon Taddiken
      */
-    record RegisteredScraper(GitHubAuthentication authentication, ScrapeRepositoryRequest repository) {
+    record RegisteredScraper(GitHubAuthentication authentication, ScrapeTarget target) {
 
-        RepositoryMetrics scrapeWith(ScrapeService scrapeRepositoryService) {
-            return scrapeRepositoryService.scrape(authentication, repository);
+        ScrapeResult scrapeWith(ScrapeService scrapeRepositoryService) {
+            return scrapeRepositoryService.scrape(authentication, target);
         }
     }
 }

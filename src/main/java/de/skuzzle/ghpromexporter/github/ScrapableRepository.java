@@ -14,6 +14,11 @@ import org.kohsuke.github.GHRepositoryStatistics.CodeFrequency;
 import org.kohsuke.github.GHRepositoryStatistics.ContributorStats;
 import org.kohsuke.github.GitHub;
 
+/**
+ * Downloads all relevant information from a github repository.
+ *
+ * @author Simon Taddiken
+ */
 public final class ScrapableRepository {
 
     private final GHRepository repository;

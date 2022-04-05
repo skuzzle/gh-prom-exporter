@@ -11,9 +11,8 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 /**
- * Internal service for actually scraping a repository (given as
- * {@link ScrapeRepositoryRequest}), accessing it using a given
- * {@link GitHubAuthentication}.
+ * Internal service for actually scraping a repository (given as {@link ScrapeTarget}),
+ * accessing it using a given {@link GitHubAuthentication}.
  *
  * @author Simon Taddiken
  */
@@ -22,19 +21,19 @@ class ScrapeService {
 
     private static final Logger log = LoggerFactory.getLogger(ScrapeService.class);
 
-    public Mono<RepositoryMetrics> scrapeReactive(GitHubAuthentication authentication,
-            ScrapeRepositoryRequest repository) {
-        return Mono.fromSupplier(() -> scrape(authentication, repository))
+    public Mono<ScrapeResult> scrapeReactive(GitHubAuthentication authentication,
+            ScrapeTarget target) {
+        return Mono.fromSupplier(() -> scrape(authentication, target))
                 .subscribeOn(Schedulers.boundedElastic());
     }
 
-    public RepositoryMetrics scrape(GitHubAuthentication authentication, ScrapeRepositoryRequest repository) {
+    public ScrapeResult scrape(GitHubAuthentication authentication, ScrapeTarget target) {
         final long start = System.currentTimeMillis();
         return AppMetrics.scrapeDuration().record(() -> {
-            final var repositoryFullName = repository.repositoryFullName();
+            final var repositoryFullName = target.repositoryFullName();
             final var scrapableRepository = ScrapableRepository.load(authentication, repositoryFullName);
 
-            final RepositoryMetrics repositoryMetrics = new RepositoryMetrics(
+            final ScrapeResult repositoryMetrics = new ScrapeResult(
                     scrapableRepository.totalAdditions(),
                     scrapableRepository.totalDeletions(),
                     scrapableRepository.commitsToMainBranch(),
@@ -46,7 +45,7 @@ class ScrapeService {
                     scrapableRepository.sizeInKb(),
                     System.currentTimeMillis() - start);
 
-            log.debug("Scraped fresh metrics for {} in {}ms", repository, repositoryMetrics.scrapeDuration());
+            log.debug("Scraped fresh metrics for {} in {}ms", target, repositoryMetrics.scrapeDuration());
             return repositoryMetrics;
         });
     }

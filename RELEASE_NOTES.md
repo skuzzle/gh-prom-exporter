@@ -2,12 +2,10 @@
 
 [![Coverage Status](https://coveralls.io/repos/github/skuzzle/gh-prom-exporter/badge.svg?branch=master)](https://coveralls.io/github/skuzzle/gh-prom-exporter?branch=master) [![Twitter Follow](https://img.shields.io/twitter/follow/skuzzleOSS.svg?style=social)](https://twitter.com/skuzzleOSS)
 
-* Upgrade to Spring-Boot `2.6.3` (coming from `2.6.2`)
 * Refactoring and improve internal documentation
-* Add new metric: main branch commit count
-* Add more internal metrics: `registered_scrapers`, `scrape_failures`, `abuses`, `api_calls` and `rate_limit_hits`
+* Upgrade to Spring-Boot 2.6.6 (coming from 2.6.3)
 
 
 ```
-docker pull ghcr.io/skuzzle/gh-prom-exporter/gh-prom-exporter:0.0.9
+docker pull ghcr.io/skuzzle/gh-prom-exporter/gh-prom-exporter:0.0.10
 ```
