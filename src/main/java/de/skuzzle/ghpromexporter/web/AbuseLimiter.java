@@ -25,7 +25,7 @@ class AbuseLimiter {
 
     /**
      * Returns an empty optional if the abuse limit was hit. Otherwise the Mono will
-     * contain just a arbitrary object.
+     * contain just an arbitrary object.
      *
      * @param origin The origin IP to check.
      * @return An empty Mono if the abuse limit was violated by that IP.
@@ -39,7 +39,7 @@ class AbuseLimiter {
     private boolean abuseLimitExceeded(InetAddress origin, int actualAbuses) {
         if (actualAbuses >= abuseLimit) {
             AppMetrics.abuses().increment();
-            log.warn("Abuse limit exceeded for IP address {}. Countet violations: {}", origin, actualAbuses);
+            log.warn("Abuse limit exceeded for IP address {}. Counted violations: {}", origin, actualAbuses);
             return false;
         }
         return true;
