@@ -5,5 +5,5 @@
 * Upgrade to Spring-Boot 2.7.2 (coming from 2.7.1)
 
 ```
-docker pull ghcr.io/skuzzle/gh-prom-exporter/gh-prom-exporter:0.0.12-SNAPSHOT
+docker pull ghcr.io/skuzzle/gh-prom-exporter/gh-prom-exporter:0.0.12
 ```
