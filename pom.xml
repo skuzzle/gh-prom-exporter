@@ -36,7 +36,7 @@
         <docker.registry.name>ghcr.io</docker.registry.name>
         <docker.image.name>${docker.registry.name}/${github.user}/${github.name}/${project.artifactId}</docker.image.name>
 
-        <spring-boot.version>2.7.1</spring-boot.version>
+        <spring-boot.version>2.7.2</spring-boot.version>
         <spring-cloud.version>2021.0.3</spring-cloud.version>
         <guava.version>31.0.1-jre</guava.version>
         <github-api.version>1.135</github-api.version>
