@@ -52,7 +52,7 @@ class AbuseLimiter {
      * @param origin The origin IP.
      */
     void recordFailedCall(Throwable e, InetAddress origin) {
-        log.warn("Abuse recorded for {}: {}", origin, e.getMessage());
+        log.warn("Abuse recorded for {}: {}", origin, e.getMessage(), e);
         abusers.put(origin, _0IfNull(abusers.getIfPresent(origin)) + 1);
     }
 
