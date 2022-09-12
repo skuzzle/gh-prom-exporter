@@ -2,7 +2,7 @@
 
 [![Coverage Status](https://coveralls.io/repos/github/${github.user}/${github.name}/badge.svg?branch=${github.main-branch})](https://coveralls.io/github/${github.user}/${github.name}?branch=${github.main-branch}) [![Twitter Follow](https://img.shields.io/twitter/follow/skuzzleOSS.svg?style=social)](https://twitter.com/skuzzleOSS)
 
-* Upgrade to Spring-Boot 2.7.2 (coming from 2.7.1)
+* Log whole stack trace when a potential abuse was detected
 
 ```
 docker pull ${docker.image.name}:${project.version}
