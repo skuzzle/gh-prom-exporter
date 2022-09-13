@@ -1,0 +1,49 @@
+dynamic-directory: false
+snapshot-name: test_scrape_with_missing_contributor_stats_0
+snapshot-number: 0
+test-class: de.skuzzle.ghpromexporter.web.ScrapeEndpointControllerTest
+test-method: test_scrape_with_missing_contributor_stats
+
+INFO: This registry is sorted and cleaned up from some random values to ensure deterministic testing behavior
+
+# HELP github_additions_total Sum of additions over the last 52 weeks
+# HELP github_commits_to_main_branch_total Number of commits to the main branch
+# HELP github_deletions_total Negative sum of deletions over the last 52 weeks
+# HELP github_forks_created The repository's fork count
+# HELP github_forks_total The repository's fork count
+# HELP github_open_issues_created The repository's open issue count
+# HELP github_open_issues_total The repository's open issue count
+# HELP github_scrape_duration Duration of a single scrape
+# HELP github_scrape_duration_created Duration of a single scrape
+# HELP github_size_created The repository's size in KB
+# HELP github_size_total The repository's size in KB
+# HELP github_stargazers_created The repository's stargazer count
+# HELP github_stargazers_total The repository's stargazer count
+# HELP github_subscribers_created The repository's subscriber count
+# HELP github_subscribers_total The repository's subscriber count
+# HELP github_watchers_created The repository's watcher count
+# HELP github_watchers_total The repository's watcher count
+# TYPE github_additions_total counter
+# TYPE github_commits_to_main_branch_total counter
+# TYPE github_deletions_total counter
+# TYPE github_forks_created gauge
+# TYPE github_forks_total counter
+# TYPE github_open_issues_created gauge
+# TYPE github_open_issues_total counter
+# TYPE github_scrape_duration summary
+# TYPE github_scrape_duration_created gauge
+# TYPE github_size_created gauge
+# TYPE github_size_total counter
+# TYPE github_stargazers_created gauge
+# TYPE github_stargazers_total counter
+# TYPE github_subscribers_created gauge
+# TYPE github_subscribers_total counter
+# TYPE github_watchers_created gauge
+# TYPE github_watchers_total counter
+github_forks_total{owner="skuzzle",repository="test-repo",} 0.0
+github_open_issues_total{owner="skuzzle",repository="test-repo",} 0.0
+github_scrape_duration_count{owner="skuzzle",repository="test-repo",} 1.0
+github_size_total{owner="skuzzle",repository="test-repo",} 0.0
+github_stargazers_total{owner="skuzzle",repository="test-repo",} 0.0
+github_subscribers_total{owner="skuzzle",repository="test-repo",} 0.0
+github_watchers_total{owner="skuzzle",repository="test-repo",} 0.0

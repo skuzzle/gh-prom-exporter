@@ -2,7 +2,7 @@ package de.skuzzle.ghpromexporter.web;
 
 import java.util.Map;
 
-import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
