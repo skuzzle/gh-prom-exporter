@@ -59,9 +59,13 @@ public final class PrometheusRepositoryMetricAggration {
     public PrometheusRepositoryMetricAggration addRepositoryScrapeResults(
             ScrapeTarget repository,
             ScrapeResult metrics) {
-        additions.labels(repository.owner(), repository.name()).inc(metrics.totalAdditions());
-        deletions.labels(repository.owner(), repository.name()).inc(metrics.totalDeletions());
-        commitsToMainBranch.labels(repository.owner(), repository.name()).inc(metrics.commitsToMainBranch());
+
+        if (metrics.statisticsAvailable()) {
+            additions.labels(repository.owner(), repository.name()).inc(metrics.totalAdditions());
+            deletions.labels(repository.owner(), repository.name()).inc(metrics.totalDeletions());
+            commitsToMainBranch.labels(repository.owner(), repository.name()).inc(metrics.commitsToMainBranch());
+        }
+
         stargazers.labels(repository.owner(), repository.name()).inc(metrics.stargazersCount());
         forks.labels(repository.owner(), repository.name()).inc(metrics.forkCount());
         open_issues.labels(repository.owner(), repository.name()).inc(metrics.openIssueCount());

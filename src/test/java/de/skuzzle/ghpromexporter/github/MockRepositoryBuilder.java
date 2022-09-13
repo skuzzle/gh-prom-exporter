@@ -95,6 +95,20 @@ public class MockRepositoryBuilder {
         return this;
     }
 
+    // simulates behavior described in GH Issue #8:
+    // https://github.com/skuzzle/gh-prom-exporter/issues/8
+    public MockRepositoryBuilder withThrowingCodeFrequency() throws Exception {
+        when(statistics.getCodeFrequency()).thenThrow(NullPointerException.class);
+        return this;
+    }
+
+    // simulates behavior described in GH Issue #8:
+    // https://github.com/skuzzle/gh-prom-exporter/issues/8
+    public MockRepositoryBuilder withThrowingContributorStats() throws Exception {
+        when(statistics.getContributorStats()).thenThrow(NullPointerException.class);
+        return this;
+    }
+
     public GHRepository build() {
         return this.repository;
     }

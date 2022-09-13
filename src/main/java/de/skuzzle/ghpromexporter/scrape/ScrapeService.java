@@ -43,6 +43,8 @@ class ScrapeService {
                     scrapableRepository.subscriberCount(),
                     scrapableRepository.watchersCount(),
                     scrapableRepository.sizeInKb(),
+                    scrapableRepository.statisticsAvailable(),
+
                     System.currentTimeMillis() - start);
 
             log.debug("Scraped fresh metrics for {} in {}ms", target, repositoryMetrics.scrapeDuration());

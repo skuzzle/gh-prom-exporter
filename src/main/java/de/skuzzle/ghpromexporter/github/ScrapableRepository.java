@@ -13,6 +13,8 @@ import org.kohsuke.github.GHRepositoryStatistics;
 import org.kohsuke.github.GHRepositoryStatistics.CodeFrequency;
 import org.kohsuke.github.GHRepositoryStatistics.ContributorStats;
 import org.kohsuke.github.GitHub;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Downloads all relevant information from a github repository.
@@ -21,14 +23,19 @@ import org.kohsuke.github.GitHub;
  */
 public final class ScrapableRepository {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ScrapableRepository.class);
+
     private final GHRepository repository;
     private final List<CodeFrequency> codeFrequency;
     private final int commitsToMainBranch;
+    private final boolean statisticsAvailable;
 
-    private ScrapableRepository(GHRepository repository, List<CodeFrequency> codeFrequency, int commitsToMainBranch) {
+    private ScrapableRepository(GHRepository repository, List<CodeFrequency> codeFrequency, int commitsToMainBranch,
+            boolean statisticsAvailable) {
         this.repository = repository;
         this.codeFrequency = codeFrequency;
         this.commitsToMainBranch = commitsToMainBranch;
+        this.statisticsAvailable = statisticsAvailable;
     }
 
     public static ScrapableRepository load(GitHubAuthentication authentication, String repositoryFullName) {
@@ -42,20 +49,73 @@ public final class ScrapableRepository {
             // getStatistics call
             // Until the statistics are available, getCodeFrequency and
             // getContributorStats throw NPE, which might lead to false positives during
-            // abuse detection. To mitigate this, abuse detection must be either disabled
-            // or threshold must be set to a high value.
-            final GHRepositoryStatistics statistics = repository.getStatistics();
-            final List<CodeFrequency> codeFrequency = statistics.getCodeFrequency();
-            final IntSummaryStatistics commitsToMainBranch = StreamSupport
-                    .stream(statistics.getContributorStats().spliterator(), false)
-                    .collect(summarizingInt(ContributorStats::getTotal));
+            // abuse detection.
+            final Statistics statistics = new Statistics(repository.getStatistics());
+            final List<CodeFrequency> codeFrequency = statistics.codeFrequency();
+            final int commitsToMainBranch = statistics.commitsToMainBranch();
 
-            return new ScrapableRepository(repository, codeFrequency, (int) commitsToMainBranch.getSum());
+            return new ScrapableRepository(repository, codeFrequency, commitsToMainBranch, statistics.available());
         } catch (final IOException e) {
             throw new UncheckedIOException(e);
-        } catch (final InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new IllegalStateException(e);
+        }
+    }
+
+    /**
+     * GH Issue #8: https://github.com/skuzzle/gh-prom-exporter/issues/8
+     * <p>
+     * Internal anti corruption layer class to obtain repository statistics. GitHub API
+     * implementation occasionally throws NPE while statistics are being generated
+     * asynchronously by GitHub. This class gracefully replaces those NPEs with default
+     * values.
+     */
+    private static final class Statistics {
+
+        private final GHRepositoryStatistics statistics;
+        private boolean available = true;
+
+        private Statistics(GHRepositoryStatistics statistics) {
+            this.statistics = statistics;
+        }
+
+        boolean available() {
+            return available;
+        }
+
+        List<CodeFrequency> codeFrequency() {
+            if (!available) {
+                return List.of();
+            }
+
+            try {
+                return statistics.getCodeFrequency();
+            } catch (final Exception e) {
+                available = false;
+                LOGGER.error("Could not obtain repository code frequency", e);
+            }
+            return List.of();
+        }
+
+        int commitsToMainBranch() {
+            if (!available) {
+                return 0;
+            }
+            Exception exception = null;
+            try {
+                final IntSummaryStatistics commitsToMainBranch = StreamSupport
+                        .stream(statistics.getContributorStats().spliterator(), false)
+                        .collect(summarizingInt(ContributorStats::getTotal));
+
+                return (int) commitsToMainBranch.getSum();
+            } catch (final InterruptedException e) {
+                exception = e;
+                Thread.currentThread().interrupt();
+            } catch (final Exception e) {
+                exception = e;
+            }
+
+            LOGGER.error("Could not obtain repository contributor stats", exception);
+            available = false;
+            return 0;
         }
     }
 
@@ -81,6 +141,10 @@ public final class ScrapableRepository {
 
     public int sizeInKb() {
         return repository.getSize();
+    }
+
+    public boolean statisticsAvailable() {
+        return statisticsAvailable;
     }
 
     public long totalAdditions() {

@@ -15,6 +15,7 @@ public record ScrapeResult(
         int subscriberCount,
         int watchersCount,
         int sizeInKb,
+        boolean statisticsAvailable,
 
         /* Note: this field must always occur last */
         long scrapeDuration) {}

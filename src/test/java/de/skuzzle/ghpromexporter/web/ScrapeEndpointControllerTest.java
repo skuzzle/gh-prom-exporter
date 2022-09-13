@@ -101,6 +101,44 @@ public class ScrapeEndpointControllerTest {
     }
 
     @Test
+    void test_scrape_with_missing_contributor_stats(Snapshot snapshot) throws Exception {
+        final var serviceCall = testClient.getStatsFor("skuzzle", "test-repo");
+        final GitHubAuthentication gitHubAuthentication = successfulAuthenticationForRepository(
+                withName("skuzzle", "test-repo")
+                        .withThrowingContributorStats());
+
+        authentication.with(gitHubAuthentication, () -> {
+
+            StepVerifier.create(serviceCall)
+                    .assertNext(response -> {
+                        snapshot.assertThat(response.getBody())
+                                .as(canonicalPrometheusRegistry())
+                                .matchesSnapshotText();
+                    })
+                    .verifyComplete();
+        });
+    }
+
+    @Test
+    void test_scrape_with_missing_code_frequency(Snapshot snapshot) throws Exception {
+        final var serviceCall = testClient.getStatsFor("skuzzle", "test-repo");
+        final GitHubAuthentication gitHubAuthentication = successfulAuthenticationForRepository(
+                withName("skuzzle", "test-repo")
+                        .withThrowingCodeFrequency());
+
+        authentication.with(gitHubAuthentication, () -> {
+
+            StepVerifier.create(serviceCall)
+                    .assertNext(response -> {
+                        snapshot.assertThat(response.getBody())
+                                .as(canonicalPrometheusRegistry())
+                                .matchesSnapshotText();
+                    })
+                    .verifyComplete();
+        });
+    }
+
+    @Test
     void test_successful_scrape_open_metrics(Snapshot snapshot) throws Exception {
         final var serviceCall = testClient.getStatsFor("skuzzle", "test-repo",
                 Map.of("Accept", "application/openmetrics-text"));
