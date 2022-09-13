@@ -2,6 +2,7 @@ package de.skuzzle.ghpromexporter.web;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.List;
 
 import org.springframework.http.server.reactive.ServerHttpRequest;
 
@@ -28,6 +29,10 @@ interface AuthenticationProvider {
             } else if (authorization.toLowerCase().startsWith("bearer ")) {
                 return GitHubAuthentication.token(authorization.substring("bearer ".length()));
             }
+        }
+        final List<String> tokenParam = request.getQueryParams().get("token");
+        if (tokenParam.size() == 1) {
+            return GitHubAuthentication.token(tokenParam.get(0));
         }
         return GitHubAuthentication.anonymous(request.getRemoteAddress().getAddress());
     }
