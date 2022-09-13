@@ -32,6 +32,11 @@ public interface GitHubAuthentication {
 
     GitHub connectToGithub() throws IOException;
 
+    /**
+     * Remove this authentication from the internal cache.
+     */
+    void disconnect();
+
     boolean isAnonymous();
 
 }

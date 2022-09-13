@@ -47,7 +47,7 @@ record ScrapeEndpointController(
         final var targets = MultipleScrapeTargets.parse(owner, repositories);
         log.info("Request from '{}' to scrape '{}'", gitHubAuthentication, targets);
 
-        return abuseLimiter.blockAbusers(origin)
+        return abuseLimiter.blockAbusers(origin, gitHubAuthentication)
                 .flatMap(__ -> scrapeRepositoriesAndSerialize(gitHubAuthentication, targets, contentType))
                 .doOnError(exception -> abuseLimiter.recordFailedCall(exception, origin))
                 .onErrorResume(exception -> Mono.just(ResponseEntity.badRequest().body(exception.getMessage())))

@@ -9,6 +9,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.cache.Cache;
 
 import de.skuzzle.ghpromexporter.appmetrics.AppMetrics;
+import de.skuzzle.ghpromexporter.github.GitHubAuthentication;
 import reactor.core.publisher.Mono;
 
 class AbuseLimiter {
@@ -28,18 +29,22 @@ class AbuseLimiter {
      * contain just an arbitrary object.
      *
      * @param origin The origin IP to check.
+     * @param authentication The resolved GitHubAuthentication object for the current
+     *            request.
      * @return An empty Mono if the abuse limit was violated by that IP.
      */
-    Mono<Object> blockAbusers(InetAddress origin) {
+    Mono<Object> blockAbusers(InetAddress origin, GitHubAuthentication authentication) {
         return Mono.fromSupplier(() -> _0IfNull(abusers.getIfPresent(origin)))
-                .filter(actualAbuses -> abuseLimitExceeded(origin, actualAbuses))
+                .filter(actualAbuses -> abuseLimitExceeded(origin, authentication, actualAbuses))
                 .map(abuses -> (Object) abuses);
     }
 
-    private boolean abuseLimitExceeded(InetAddress origin, int actualAbuses) {
+    private boolean abuseLimitExceeded(InetAddress origin, GitHubAuthentication authentication, int actualAbuses) {
         if (actualAbuses >= abuseLimit) {
             AppMetrics.abuses().increment();
-            log.warn("Abuse limit exceeded for IP address {}. Counted violations: {}", origin, actualAbuses);
+            authentication.disconnect();
+            log.warn("Abuse limit exceeded for IP address {}/Authentication {}. Counted violations: {}",
+                    origin, authentication, actualAbuses);
             return false;
         }
         return true;

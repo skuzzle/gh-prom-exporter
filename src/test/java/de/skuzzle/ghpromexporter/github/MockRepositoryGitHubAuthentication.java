@@ -43,4 +43,9 @@ public final class MockRepositoryGitHubAuthentication implements GitHubAuthentic
         return anonymous;
     }
 
+    @Override
+    public void disconnect() {
+        // nothing to do
+    }
+
 }

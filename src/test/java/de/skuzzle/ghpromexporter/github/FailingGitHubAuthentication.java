@@ -23,4 +23,9 @@ public record FailingGitHubAuthentication(boolean anonymous) implements GitHubAu
     public boolean isAnonymous() {
         return anonymous;
     }
+
+    @Override
+    public void disconnect() {
+        // nothing to do
+    }
 }
