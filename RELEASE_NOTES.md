@@ -5,5 +5,5 @@
 * Add option to pass GitHub token via query parameter: `?token=...` (Note: this is primarily intended for local testing and should not be used in production)
 
 ```
-docker pull ghcr.io/skuzzle/gh-prom-exporter/gh-prom-exporter:0.0.15-SNAPSHOT
+docker pull ghcr.io/skuzzle/gh-prom-exporter/gh-prom-exporter:0.0.15
 ```
