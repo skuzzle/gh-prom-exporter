@@ -39,7 +39,6 @@ final class GitHubFactory {
         log.info("Creating new GitHub connection for {}", origin);
         return origin.consumeBuilder(new GitHubBuilder())
                 .withConnector(new RequestCountingHttpConnector())
-                .withRateLimitHandler(new LoggingRateLimiter(origin))
                 .build();
     }
 
