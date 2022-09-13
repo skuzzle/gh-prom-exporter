@@ -6,5 +6,5 @@
 * [#8](https://github.com/skuzzle/gh-prom-exporter/issues/8) Possible fix for scraping while statistics are absent.
 
 ```
-docker pull ghcr.io/skuzzle/gh-prom-exporter/gh-prom-exporter:0.0.16-SNAPSHOT
+docker pull ghcr.io/skuzzle/gh-prom-exporter/gh-prom-exporter:0.0.16
 ```
