@@ -1,13 +1,13 @@
 package de.skuzzle.ghpromexporter.github;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.concurrent.ExecutionException;
 
 import org.kohsuke.github.GitHub;
 import org.kohsuke.github.GitHubBuilder;
-import org.kohsuke.github.HttpConnector;
+import org.kohsuke.github.connector.GitHubConnector;
+import org.kohsuke.github.connector.GitHubConnectorRequest;
+import org.kohsuke.github.connector.GitHubConnectorResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,12 +43,12 @@ final class GitHubFactory {
                 .build();
     }
 
-    private static class RequestCountingHttpConnector implements HttpConnector {
+    private static class RequestCountingHttpConnector implements GitHubConnector {
 
         @Override
-        public HttpURLConnection connect(URL url) throws IOException {
+        public GitHubConnectorResponse send(GitHubConnectorRequest connectorRequest) throws IOException {
             AppMetrics.apiCalls().increment();
-            return DEFAULT.connect(url);
+            return DEFAULT.send(connectorRequest);
         }
 
     }
