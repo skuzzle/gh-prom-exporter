@@ -15,6 +15,11 @@ sealed interface InternalGitHubAuthentication extends GitHubAuthentication {
         return GitHubFactory.createGitHub(this);
     }
 
+    @Override
+    default void disconnect() {
+        GitHubFactory.disconnect(this);
+    }
+
     record TokenAuthentication(String token) implements InternalGitHubAuthentication {
 
         @Override

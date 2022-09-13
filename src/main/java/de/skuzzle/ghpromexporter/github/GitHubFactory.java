@@ -42,6 +42,10 @@ final class GitHubFactory {
                 .build();
     }
 
+    static void disconnect(GitHubAuthentication authentication) {
+        CACHED_GITHUBS.invalidate(authentication);
+    }
+
     private static class RequestCountingHttpConnector implements GitHubConnector {
 
         @Override

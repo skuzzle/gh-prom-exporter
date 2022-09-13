@@ -36,6 +36,7 @@ public final class ScrapableRepository {
             final GitHub gitHub = authentication.connectToGithub();
             final GHRepository repository = gitHub.getRepository(repositoryFullName);
             final GHRepositoryStatistics statistics = repository.getStatistics();
+
             final List<CodeFrequency> codeFrequency = statistics.getCodeFrequency();
             final IntSummaryStatistics commitsToMainBranch = StreamSupport
                     .stream(statistics.getContributorStats().spliterator(), false)
