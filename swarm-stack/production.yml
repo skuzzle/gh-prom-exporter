@@ -10,10 +10,6 @@ services:
     networks:
     - traefik_proxy
     - monitoring
-    environment:
-      # GH Issue #8: https://github.com/skuzzle/gh-prom-exporter/issues/8
-      # mitigate false positives during abuse detection
-      WEB_ABUSE_LIMIT: '20'
     deploy:
       labels:
         traefik.enable: 'true'
