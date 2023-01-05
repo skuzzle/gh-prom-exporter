@@ -9,7 +9,7 @@
     </parent>
     <groupId>de.skuzzle.ghpromexporter</groupId>
     <artifactId>gh-prom-exporter</artifactId>
-    <version>0.0.18</version>
+    <version>0.0.19</version>
     <name>gh-prom-exporter</name>
     <description>Export GitHub repository metrics in prometheus format</description>
     <properties>
@@ -29,7 +29,7 @@
         <docker.publish.psw>CHANGE_ME</docker.publish.psw>
         <docker.registry.name>ghcr.io</docker.registry.name>
         <docker.image.name>${docker.registry.name}/${github.user}/${github.name}/${project.artifactId}</docker.image.name>
-        <spring-boot.version>3.0.0</spring-boot.version>
+        <spring-boot.version>3.0.1</spring-boot.version>
         <guava.version>31.1-jre</guava.version>
         <github-api.version>1.313</github-api.version>
         <snapshottest.version>1.7.1</snapshottest.version>
@@ -92,12 +92,12 @@
         </dependency>
         <dependency>
             <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-tracing</artifactId>
+            <artifactId>micrometer-tracing-bridge-brave</artifactId>
         </dependency>
         <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-prometheus</artifactId>
-            <scope>runtime</scope>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
