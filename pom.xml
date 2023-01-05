@@ -9,7 +9,7 @@
     </parent>
     <groupId>de.skuzzle.ghpromexporter</groupId>
     <artifactId>gh-prom-exporter</artifactId>
-    <version>0.0.19</version>
+    <version>0.0.20-SNAPSHOT</version>
     <name>gh-prom-exporter</name>
     <description>Export GitHub repository metrics in prometheus format</description>
     <properties>
