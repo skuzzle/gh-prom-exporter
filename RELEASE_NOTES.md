@@ -5,5 +5,5 @@
 * Upgrade to Spring-Boot 3.0.0 (coming from 2.7.4)
 
 ```
-docker pull ghcr.io/skuzzle/gh-prom-exporter/gh-prom-exporter:0.0.18-SNAPSHOT
+docker pull ghcr.io/skuzzle/gh-prom-exporter/gh-prom-exporter:0.0.18
 ```
