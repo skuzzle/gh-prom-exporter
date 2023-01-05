@@ -2,13 +2,13 @@ package de.skuzzle.ghpromexporter.scrape;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cloud.sleuth.Span;
-import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import de.skuzzle.ghpromexporter.appmetrics.AppMetrics;
 import de.skuzzle.ghpromexporter.github.GitHubAuthentication;
 import de.skuzzle.ghpromexporter.scrape.RegistrationRepository.RegisteredScraper;
+import io.micrometer.tracing.Span;
+import io.micrometer.tracing.Tracer;
 import reactor.core.publisher.Mono;
 
 /**
