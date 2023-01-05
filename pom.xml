@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>de.skuzzle</groupId>
@@ -8,14 +7,11 @@
         <version>3.0.2</version>
         <relativePath /> <!-- lookup parent from repository -->
     </parent>
-
     <groupId>de.skuzzle.ghpromexporter</groupId>
     <artifactId>gh-prom-exporter</artifactId>
     <version>0.0.18-SNAPSHOT</version>
-
     <name>gh-prom-exporter</name>
     <description>Export GitHub repository metrics in prometheus format</description>
-
     <properties>
         <java.version>17</java.version>
         <!-- Enable Code coverage -->
@@ -28,21 +24,16 @@
         <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
         <!-- Do not sign jars -->
         <gpg.skip>true</gpg.skip>
-        
         <github.name>gh-prom-exporter</github.name>
-
         <docker.publish.usr>CHANGE_ME</docker.publish.usr>
         <docker.publish.psw>CHANGE_ME</docker.publish.psw>
         <docker.registry.name>ghcr.io</docker.registry.name>
         <docker.image.name>${docker.registry.name}/${github.user}/${github.name}/${project.artifactId}</docker.image.name>
-
-        <spring-boot.version>2.7.4</spring-boot.version>
-        <spring-cloud.version>2021.0.3</spring-cloud.version>
-        <guava.version>31.0.1-jre</guava.version>
-        <github-api.version>1.308</github-api.version>
-        <snapshottest.version>1.3.0</snapshottest.version>
+        <spring-boot.version>3.0.0</spring-boot.version>
+        <guava.version>31.1-jre</guava.version>
+        <github-api.version>1.313</github-api.version>
+        <snapshottest.version>1.7.1</snapshottest.version>
     </properties>
-
     <repositories>
         <repository>
             <id>repository.spring.milestone</id>
@@ -57,7 +48,6 @@
             <url>https://repo.spring.io/milestone</url>
         </pluginRepository>
     </pluginRepositories>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -68,9 +58,9 @@
                 <scope>import</scope>
             </dependency>
             <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-dependencies</artifactId>
-                <version>${spring-cloud.version}</version>
+                <groupId>de.skuzzle.test</groupId>
+                <artifactId>snapshot-tests-bom</artifactId>
+                <version>${snapshottest.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -84,16 +74,8 @@
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
             </dependency>
-            <dependency>
-                <groupId>de.skuzzle.test</groupId>
-                <artifactId>snapshot-tests-core</artifactId>
-                <version>${snapshottest.version}</version>
-                <scope>test</scope>
-            </dependency>
         </dependencies>
     </dependencyManagement>
-
-
     <dependencies>
         <!-- Spring-Boot -->
         <dependency>
@@ -109,8 +91,8 @@
             <artifactId>spring-boot-starter-webflux</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-sleuth</artifactId>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-tracing</artifactId>
         </dependency>
         <dependency>
             <groupId>io.micrometer</groupId>
@@ -133,7 +115,6 @@
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
         </dependency>
-
         <dependency>
             <groupId>org.kohsuke</groupId>
             <artifactId>github-api</artifactId>
@@ -142,7 +123,6 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
-
         <!-- Prometheus -->
         <dependency>
             <groupId>io.prometheus</groupId>
@@ -152,20 +132,17 @@
             <groupId>io.prometheus</groupId>
             <artifactId>simpleclient_common</artifactId>
         </dependency>
-
         <dependency>
             <groupId>io.projectreactor</groupId>
             <artifactId>reactor-test</artifactId>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>de.skuzzle.test</groupId>
             <artifactId>snapshot-tests-core</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
-
     <build>
         <plugins>
             <plugin>

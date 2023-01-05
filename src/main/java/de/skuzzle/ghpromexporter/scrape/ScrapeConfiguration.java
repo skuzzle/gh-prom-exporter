@@ -1,10 +1,11 @@
 package de.skuzzle.ghpromexporter.scrape;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
+
+import io.micrometer.tracing.Tracer;
 
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(ScrapeProperties.class)

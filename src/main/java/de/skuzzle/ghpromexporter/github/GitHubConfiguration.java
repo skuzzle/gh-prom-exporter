@@ -1,9 +1,9 @@
 package de.skuzzle.ghpromexporter.github;
 
-import javax.annotation.PostConstruct;
-
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+
+import jakarta.annotation.PostConstruct;
 
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(GitHubProperties.class)

@@ -16,8 +16,8 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.http.HttpStatus;
 
 import de.skuzzle.ghpromexporter.github.GitHubAuthentication;
-import de.skuzzle.test.snapshots.EnableSnapshotTests;
 import de.skuzzle.test.snapshots.SnapshotDsl.Snapshot;
+import de.skuzzle.test.snapshots.junit5.EnableSnapshotTests;
 import reactor.test.StepVerifier;
 
 @EnableSnapshotTests
